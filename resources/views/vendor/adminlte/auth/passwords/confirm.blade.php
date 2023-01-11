@@ -1,5 +1,7 @@
 @extends('adminlte::master')
 
+@section('title', 'Konfirmasi Password')
+
 @section('adminlte_css')
     @yield('css')
 @stop
@@ -30,14 +32,14 @@
 
         {{-- Lockscreen user name --}}
         <div class="lockscreen-name">
-            {{ isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->email }}
+            {{ isset(Auth::user()->nama) ? Auth::user()->nama : Auth::user()->email }}
         </div>
 
         {{-- Lockscreen item --}}
         <div class="lockscreen-item">
             @if(config('adminlte.usermenu_image'))
                 <div class="lockscreen-image">
-                    <img src="{{ Auth::user()->adminlte_image() }}" alt="{{ Auth::user()->name }}">
+                    <img src="{{ Auth::user()->adminlte_image() }}" alt="{{ Auth::user()->nama }}">
                 </div>
             @endif
 

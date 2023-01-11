@@ -2,19 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use DataTables;
 use App\Models\Kelas;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Support\Renderable;
 
 class KelasController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            $data = Kelas::latest()->get();
+
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('jml_siswa', 2)
+                ->addColumn('action', function ($row) {
+                    $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('kelas.index');
     }
 
     /**

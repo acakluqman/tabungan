@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use DataTables;
 use App\Models\Tabungan;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 
 class TabunganController extends Controller
@@ -10,11 +12,23 @@ class TabunganController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            $data = Tabungan::latest()->get();
+
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    return '<a href="javascript:void(0)" id="edit" data-id="' . $row->id_tabungan . '" class="btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" id="delete" data-id="' . $row->id_tabungan . '" class="btn btn-danger btn-sm">Delete</a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('tabungan.index');
     }
 
     /**

@@ -2,19 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTahunRequest;
+use DataTables;
+use Carbon\Carbon;
 use App\Models\Tahun;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 
 class TahunController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()) {
+            $tahun = Tahun::orderBy('thn_ajaran', 'desc')->get();
+
+            return Datatables::of($tahun)
+                ->addIndexColumn()
+                ->addColumn('tgl_efektif', function ($row) {
+                    return Carbon::parse($row->tgl_mulai)->isoFormat('D MMMM Y') . ' s.d. ' . Carbon::parse($row->tgl_selesai)->isoFormat('D MMMM Y');
+                })
+                ->addColumn('action', function ($row) {
+                    return '<a href="javascript:void(0)" id="edit" data-id="' . $row->thn_ajaran . '" class="btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" id="delete" data-id="' . $row->thn_ajaran . '" class="btn btn-danger btn-sm">Delete</a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('tahun.index');
     }
 
     /**
@@ -30,12 +49,20 @@ class TahunController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  StoreTahunRequest  $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Tahun $tahun, StoreTahunRequest $request)
     {
-        //
+        if ($request->is_aktif) {
+            Tahun::where('is_aktif', 1)->first()->update(['is_aktif' => 0]);
+        }
+
+        Tahun::create($request->validated());
+
+        return redirect()
+            ->route('tahun.index')
+            ->with('success', 'Berhasi simpan tahun ajaran!');
     }
 
     /**
@@ -75,11 +102,15 @@ class TahunController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Tahun  $tahun
-     * @return \Illuminate\Http\Response
+     * @param  Request $request
+     * @return RedirectResponse
      */
-    public function destroy(Tahun $tahun)
+    public function destroy(Request $request)
     {
-        //
+        $tahun = Tahun::findOrFail($request->id);
+        $tahun->delete();
+
+        return redirect()->route('tahun.index')
+            ->with('success', 'Berhasil menghapus data tahun ajaran!');
     }
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->char('thn_ajaran', 4)->primary();
             $table->date('tgl_mulai');
             $table->date('tgl_selesai');
-            $table->boolean('is_aktif')->unique();
+            $table->boolean('is_aktif');
             $table->timestamps();
         });
     }

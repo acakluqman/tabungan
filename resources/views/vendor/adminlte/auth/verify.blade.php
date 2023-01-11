@@ -1,10 +1,12 @@
 @extends('adminlte::auth.auth-page', ['auth_type' => 'login'])
 
+@section('title', 'Verify')
+
 @section('auth_header', __('adminlte::adminlte.verify_message'))
 
 @section('auth_body')
 
-    @if(session('resent'))
+    @if (session('resent'))
         <div class="alert alert-success" role="alert">
             {{ __('adminlte::adminlte.verify_email_sent') }}
         </div>

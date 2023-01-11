@@ -8,4 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class Tabungan extends Model
 {
     use HasFactory;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'tabungan';
+
+    /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id_tabungan';
 }

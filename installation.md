@@ -20,6 +20,10 @@ php artisan permission:create-permission-routes
 ```
 
 ```bash
+php artisan db:seed --class=PermissionsSeeder
+```
+
+```bash
 php artisan storage:link
 ```
 

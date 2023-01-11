@@ -14,9 +14,9 @@ return [
     |
     */
 
-    'title' => 'SDIT AL-MANAR',
-    'title_prefix' => 'SDIT AL-MANAR',
-    'title_postfix' => '',
+    'title' => 'SDIT Al-Manar',
+    'title_prefix' => '',
+    'title_postfix' => ' - SDIT Al-Manar',
 
     /*
     |--------------------------------------------------------------------------
@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'use_ico_only' => false,
+    'use_ico_only' => true,
     'use_full_favicon' => false,
 
     /*
@@ -64,7 +64,7 @@ return [
     */
 
     'logo' => '<b>SDIT</b> AL-MANAR',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+    'logo_img' => 'storage/almanar-logo.png',
     'logo_img_class' => 'brand-image img-circle',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
@@ -84,10 +84,10 @@ return [
     */
 
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => true,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'alt' => 'Auth Logo',
+            'path' => 'storage/almanar-logo.png',
+            'alt' => 'Al-Manar Logo',
             'class' => '',
             'width' => 50,
             'height' => 50,
@@ -109,7 +109,7 @@ return [
     'preloader' => [
         'enabled' => true,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'storage/almanar-logo.png',
             'alt' => 'SDIT AL-MANAR Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
@@ -130,7 +130,7 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
     'usermenu_desc' => false,
@@ -167,7 +167,7 @@ return [
     |
     */
 
-    'classes_auth_card' => 'card-outline card-primary',
+    'classes_auth_card' => 'card-default',
     'classes_auth_header' => '',
     'classes_auth_body' => '',
     'classes_auth_footer' => '',
@@ -256,7 +256,7 @@ return [
     'dashboard_url' => 'home',
     'logout_url' => 'logout',
     'login_url' => 'login',
-    'register_url' => 'register',
+    'register_url' => false,
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
     'profile_url' => false,
@@ -308,130 +308,65 @@ return [
         ],
         [
             'text' => 'DASHBOARD',
-            'url'  => 'admin/blog',
+            'url'  => 'home',
             'icon' => 'fas fa-fw fa-tachometer-alt',
-            // 'can'  => 'manage-blog',
         ],
         [
             'text'    => 'DATA MASTER',
             'icon'    => 'fas fa-fw fa-server',
+            'can'   => ['kelas', 'jenis-tagihan'],
             'submenu' => [
                 [
+                    'text' => 'Tahun Ajaran',
+                    'url'  => 'tahun',
+                    'can'   => 'tahun.index'
+                ],
+                [
                     'text' => 'Data Kelas',
-                    'url'  => '#',
+                    'url'  => 'kelas',
+                    'can'   => 'kelas.index'
+                ],
+                [
+                    'text' => 'Kelas Siswa',
+                    'url'  => 'kelas-siswa',
+                    'can'   => 'kelas.index'
                 ],
                 [
                     'text' => 'Jenis Tagihan',
-                    'url'  => '#',
+                    'url'  => 'jenis-tagihan',
+                    'can'   => 'jenis-tagihan.index'
                 ],
             ]
         ],
         [
             'text' => 'SISWA',
-            'url'  => 'admin/blog',
+            'url'  => 'siswa',
             'icon' => 'far fa-fw fa-user',
-            // 'can'  => 'manage-blog',
+            'can'  => 'siswa.index',
         ],
         [
             'text' => 'TABUNGAN SISWA',
-            'url'  => 'admin/blog',
+            'url'  => 'tabungan',
             'icon' => 'fas fa-fw fa-wallet',
-            // 'can'  => 'manage-blog',
+            'can'  => 'tabungan.index',
         ],
         [
             'text' => 'TAGIHAN',
-            'url'  => 'admin/blog',
+            'url'  => 'tagihan',
             'icon' => 'fas fa-fw fa-money-bill',
-            // 'can'  => 'manage-blog',
+            'can'  => 'tagihan.index',
         ],
         [
             'text' => 'TRANSAKSI',
-            'url'  => 'admin/blog',
+            'url'  => 'transaksi',
             'icon' => 'fas fa-fw fa-cash-register',
-            // 'can'  => 'manage-blog',
+            'can'  => 'transaksi.index',
         ],
         [
             'text' => 'DATA PENGGUNA',
-            'url'  => 'admin/blog',
+            'url'  => 'users',
             'icon' => 'fas fa-fw fa-users',
-            // 'can'  => 'manage-blog',
-        ],
-        [
-            'text' => 'blog',
-            'url'  => 'admin/blog',
-            'can'  => 'manage-blog',
-        ],
-        [
-            'text'        => 'pages',
-            'url'         => 'admin/pages',
-            'icon'        => 'far fa-fw fa-file',
-            'label'       => 4,
-            'label_color' => 'success',
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text'    => 'multilevel',
-            'icon'    => 'fas fa-fw fa-share',
-            'submenu' => [
-                [
-                    'text' => 'level_one',
-                    'url'  => '#',
-                ],
-                [
-                    'text'    => 'level_one',
-                    'url'     => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url'  => '#',
-                        ],
-                        [
-                            'text'    => 'level_two',
-                            'url'     => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url'  => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url'  => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url'  => '#',
-                ],
-            ],
-        ],
-        ['header' => 'labels'],
-        [
-            'text'       => 'important',
-            'icon_color' => 'red',
-            'url'        => '#',
-        ],
-        [
-            'text'       => 'warning',
-            'icon_color' => 'yellow',
-            'url'        => '#',
-        ],
-        [
-            'text'       => 'information',
-            'icon_color' => 'cyan',
-            'url'        => '#',
+            'can'  => 'users.index',
         ],
     ],
 
@@ -471,7 +406,7 @@ return [
 
     'plugins' => [
         'Datatables' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
@@ -491,7 +426,7 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
@@ -516,7 +451,7 @@ return [
             ],
         ],
         'Sweetalert2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',

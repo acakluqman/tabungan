@@ -18,9 +18,10 @@ return new class extends Migration
         Schema::create('transaksi', function (Blueprint $table) {
             $table->id('id_transaksi');
             $table->foreignIdFor(Tagihan::class, 'id_tagihan');
-            $table->dateTime('tgl_transaksi');
+            $table->enum('tipe_tx', ['debit', 'kredit']);
             $table->float('total_tagihan');
             $table->float('total_bayar');
+            $table->dateTime('tgl_transaksi');
             $table->foreignIdFor(User::class, 'validator');
             $table->dateTime('tgl_validasi');
             $table->timestamps();
