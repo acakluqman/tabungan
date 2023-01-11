@@ -15,11 +15,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('siswa', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_siswa');
             $table->unsignedBigInteger('nis')->unique();
+            $table->string('nama');
             $table->string('alamat');
             $table->foreignIdFor(User::class, 'id_user');
             $table->timestamps();
+
+            $table->foreign('id_user')->references('id_user')->on('users')->onUpdate('cascade')->onDelete('restrict');
         });
     }
 

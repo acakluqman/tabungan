@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Tahun;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,13 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('kelas', function (Blueprint $table) {
-            $table->id('id_kelas');
-            $table->foreignIdFor(Tahun::class, 'thn_ajaran');
-            $table->string('nama');
+        Schema::create('tahun_ajaran', function (Blueprint $table) {
+            $table->char('thn_ajaran', 4)->primary();
+            $table->date('tgl_mulai');
+            $table->date('tgl_selesai');
+            $table->boolean('is_aktif')->unique();
             $table->timestamps();
-
-            $table->foreign('thn_ajaran')->references('thn_ajaran')->on('tahun_ajaran')->onUpdate('cascade')->onDelete('restrict');
         });
     }
 
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('kelas');
+        Schema::dropIfExists('tahun_ajaran');
     }
 };
