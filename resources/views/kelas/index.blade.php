@@ -3,37 +3,151 @@
 @section('title', 'Data Kelas')
 
 @section('content_header')
-    <h1>Data Kelas</h1>
+    <h1>
+        Data Kelas</h1>
 @stop
 
 @section('content')
     <section class="content">
-        <div class="card">
-            @can('kelas.create')
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <a href="{{ route('kelas.create') }}" class="btn btn-primary">
-                            <i class="fas fa-fw fa-plus"></i> Tambah Kelas
-                        </a>
-                    </h3>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    @can('kelas.create')
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#modal-tambah">
+                                    <i class="fas fa-fw fa-plus"></i> Tambah Kelas
+                                </button>
+                            </h3>
+                        </div>
+                    @endcan
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="thn_ajaran" class="control-label">Tahun Ajaran</label>
+                                <select name="thn_ajaran" id="thn_ajaran" class="form-control">
+                                    @foreach ($tahun as $th)
+                                        <option value="{{ $th->thn_ajaran }}">
+                                            {{ 'TA ' . $th->thn_ajaran . '/' . ($th->thn_ajaran + 1) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            @endcan
-            <div class="card-body">
-                <table class="table table-striped table-hover" id="kelas">
-                    <thead>
-                        <tr>
-                            <th width="5%" class="text-center">No.</th>
-                            <th>Tahun Ajaran</th>
-                            <th>Nama Kelas</th>
-                            <th>Jumlah Siswa</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            </div>
+
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body table-responsive">
+                        <table class="table table-striped table-hover" id="kelas">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%" class="text-center">No.</th>
+                                    <th>Tahun Ajaran</th>
+                                    <th>Nama Kelas</th>
+                                    <th>Jumlah Siswa</th>
+                                    <th style="width: 10%"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
+
+    @can('kelas.create')
+        <div class="modal fade" id="modal-tambah">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tambah Kelas</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('kelas.store') }}" id="form" method="post">
+                        @method('post')
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group row">
+                                <label for="thn_ajaran" class="control-label">Tahun Ajaran</label>
+                                <select class="form-control" style="width: 100%;" name="thn" id="thn">
+                                    @foreach ($tahun as $th)
+                                        <option value="{{ $th->thn_ajaran }}">
+                                            {{ 'TA ' . $th->thn_ajaran . '/' . ($th->thn_ajaran + 1) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="nama" class="control-label">Nama Kelas</label>
+                                <input type="text" class="form-control" name="nama" id="nama"
+                                    placeholder="Nama Kelas" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endcan
+    @can('tahun.update')
+        <div class="modal fade" id="modal-edit">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Perbarui Ajaran Baru</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('kelas.update') }}" id="form" method="post">
+                        @method('patch')
+                        @csrf
+                        <div class="modal-body">
+                            <div id="loader">
+                                <div class="d-flex justify-content-center">
+                                    <span class="fa-stack fa-md">
+                                        <i class="fas fa-spinner fa-spin fa-stack-2x fa-fw"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div id="form-edit">
+                                <div class="form-group">
+                                    <label for="thn_ajaran" class="control-label">Tahun Ajaran</label>
+                                    <input type="hidden" name="id" id="id" readonly>
+                                    <select class="form-control" style="width: 100%;" name="thn" id="thn">
+                                        @foreach ($tahun as $th)
+                                            <option value="{{ $th->thn_ajaran }}">
+                                                {{ $th->thn_ajaran . '/' . ($th->thn_ajaran + 1) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="nama" class="control-label">Nama Kelas</label>
+                                    <input type="text" class="form-control" name="nama" id="nama" value=""
+                                        placeholder="Nama Kelas" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-success">Perbarui</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endcan
 @stop
 
 @section('js')
@@ -44,7 +158,12 @@
             table = $('#kelas').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('kelas.index') }}",
+                ajax: {
+                    url: "{{ route('kelas.index') }}",
+                    data: function(d) {
+                        d.thn_ajaran = $('#thn_ajaran').val();
+                    }
+                },
                 language: {
                     processing: 'Loading...',
                     searchPlaceholder: 'Cari',
@@ -94,6 +213,89 @@
                     },
                 ]
             });
+
+            $('#thn_ajaran').on('change', function() {
+                $('#kelas').DataTable().ajax.reload();
+            })
         })
+
+        $('#thn_ajaran, #thn').select2({
+            minimumResultsForSearch: Infinity
+        });
+
+        $('#kelas').on('click', '#edit', function(e) {
+            e.preventDefault();
+            var loader = document.getElementById('loader');;
+            var form = document.getElementById('form-edit');
+
+            $('#modal-edit').modal('show');
+
+            loader.style.display = 'block';
+            form.style.display = 'none';
+
+            $.ajax({
+                url: "{{ route('kelas.show') }}",
+                method: 'post',
+                data: {
+                    id: $(this).data('id'),
+                    _token: "{{ csrf_token() }}",
+                    _method: 'post',
+                },
+                success: function(data, textStatus, xhr) {
+                    if (data) {
+                        loader.style.display = 'none';
+                        form.style.display = 'block';
+
+                        $('#form-edit #id').val(data.id_kelas);
+                        $('#form-edit #thn_ajaran').val(data.thn_ajaran);
+                        $('#form-edit #nama').val(data.nama);
+                    }
+                },
+            });
+        });
+
+        $('#kelas').on('click', '#delete', function(e) {
+            swal.fire({
+                title: "Lanjutkan hapus kelas ini?",
+                text: "Data kelas akan dihapus dari sistem. Lanjutkan?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: 'Ya, lanjutkan',
+                cancelButtonText: 'Batalkan',
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "{{ route('kelas.destroy') }}",
+                        method: 'post',
+                        data: {
+                            id: $(this).data('id'),
+                            _token: "{{ csrf_token() }}",
+                            _method: 'delete',
+                        },
+                        success: function(data, textStatus, xhr) {
+                            swal.fire({
+                                title: 'Berhasil',
+                                text: 'Berhasil hapus data kelas!',
+                                type: 'success'
+                            });
+
+                            $('#kelas').DataTable().ajax.reload();
+                        },
+                        complete: function(xhr, textStatus) {
+                            if (xhr.status != 200) {
+                                var result = JSON.parse(xhr.responseText);
+                                swal.fire({
+                                    title: 'Oops...',
+                                    text: 'Gagal menghapus data kelas! Error: ' +
+                                        result.message,
+                                    type: 'error'
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
     </script>
 @stop

@@ -131,7 +131,7 @@ class UsersController extends Controller
             'email' => strtolower($request->email),
         ]);
 
-        $user->syncRoles($request->get('id_role'));
+        $user->syncRoles($request->id_role);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
@@ -140,7 +140,6 @@ class UsersController extends Controller
      * Delete user data
      *
      * @param Request $request
-     *
      * @return void
      */
     public function destroy(Request $request)

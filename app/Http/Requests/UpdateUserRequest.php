@@ -27,6 +27,7 @@ class UpdateUserRequest extends FormRequest
             'username' => 'required|unique:users,username,' . request()->id . ',id_user',
             'nama' => 'required',
             'email' => 'required|email:rfc,dns|unique:users,email,' . request()->id . ',id_user',
+            'id_role' => 'required'
         ];
     }
 }

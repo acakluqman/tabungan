@@ -4,7 +4,13 @@ namespace App\Http\Controllers;
 
 use DataTables;
 use App\Models\Kelas;
+use App\Models\Tahun;
+use App\Models\KelasSiswa;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\Support\Renderable;
 
 class KelasController extends Controller
@@ -16,31 +22,24 @@ class KelasController extends Controller
      */
     public function index(Request $request)
     {
+        $tahun = Tahun::orderBy('thn_ajaran', 'desc')->get();
+
         if ($request->ajax()) {
-            $data = Kelas::latest()->get();
+            $data = Kelas::where('thn_ajaran', $request->thn_ajaran)->orderBy('nama', 'asc')->get();
 
             return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('jml_siswa', 2)
+                ->addColumn('jml_siswa', function ($row) {
+                    return KelasSiswa::where('id_kelas', $row->id_kelas)->count();
+                })
                 ->addColumn('action', function ($row) {
-                    $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
-                    return $actionBtn;
+                    return '<a href="javascript:void(0)" data-id="' . $row->id_kelas . '" id="edit" class="btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" data-id="' . $row->id_kelas . '" id="delete" class="btn btn-danger btn-sm">Delete</a>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('kelas.index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return view('kelas.index', compact('tahun'));
     }
 
     /**
@@ -49,20 +48,47 @@ class KelasController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function create(Request $request)
+    {
+    }
+
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
     public function store(Request $request)
     {
-        //
+        try {
+            Kelas::create([
+                'thn_ajaran' => $request->thn,
+                'nama' => Str::upper($request->nama),
+            ]);
+
+            return redirect()->back()->with('success', 'Berhasil menambahkan data kelas!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Gagal menambahkan data kelas. Silahkan ulangi kembali! Error: ' . $th->getMessage());
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Kelas  $kelas
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return JsonResponse
      */
-    public function show(Kelas $kelas)
+    public function show(Request $request)
     {
-        //
+        $kelas = [];
+        if ($request->ajax()) {
+            $kelas = Kelas::where('id_kelas', $request->id)
+                ->first();
+        }
+
+        return response()->json($kelas);
     }
 
     /**
@@ -78,24 +104,32 @@ class KelasController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
+     * @param int $id
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Kelas  $kelas
-     * @return \Illuminate\Http\Response
+     *
+     * @return RedirectResponse
      */
-    public function update(Request $request, Kelas $kelas)
+    public function update(Request $request)
     {
-        //
+        $kelas = Kelas::findOrFail($request->id);
+
+        $kelas->update([
+            'thn_ajaran' => $request->thn,
+            'nama' => Str::upper($request->nama),
+        ]);
+
+        return redirect()->back()->with('success', 'Berhasil memperbarui data kelas.');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Kelas  $kelas
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return void
      */
-    public function destroy(Kelas $kelas)
+    public function destroy(Request $request)
     {
-        //
+        $kelas = Kelas::findOrFail($request->id);
+        $kelas->delete();
     }
 }

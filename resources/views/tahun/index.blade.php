@@ -96,7 +96,7 @@
         </div>
     @endcan
 
-    @can('tahun.show')
+    @can('tahun.update')
         <div class="modal fade" id="modal-edit">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -267,8 +267,6 @@
             });
 
             $('#tahunajaran').on('click', '#delete', function(e) {
-                console.log($(this).data('id'));
-
                 swal.fire({
                     title: "Lanjutkan hapus tahun ajaran?",
                     text: "Data tahun ajaran akan dihapus dari sistem. Lanjutkan?",
@@ -294,7 +292,7 @@
                                     type: 'success'
                                 });
 
-                                $('#tahun').DataTable().ajax.reload();
+                                $('#tahunajaran').DataTable().ajax.reload();
                             },
                             complete: function(xhr, textStatus) {
                                 if (xhr.status != 200) {

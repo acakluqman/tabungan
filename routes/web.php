@@ -1,18 +1,18 @@
 <?php
 
-use App\Http\Controllers\JenisTagihanController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KelasController;
-use App\Http\Controllers\KelasSiswaController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SiswaController;
-use App\Http\Controllers\UsersController;
-use App\Http\Controllers\PermissionsController;
-use App\Http\Controllers\TabunganController;
-use App\Http\Controllers\TagihanController;
 use App\Http\Controllers\TahunController;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\TagihanController;
+use App\Http\Controllers\TabunganController;
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\KelasSiswaController;
+use App\Http\Controllers\PermissionsController;
+use App\Http\Controllers\JenisTagihanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -88,9 +88,14 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
     /**
      * Kelas Routes
      */
-
     Route::group(['prefix' => 'kelas'], function () {
-        Route::resource('/', KelasController::class)->names('kelas');
+        Route::get('/', [KelasController::class, 'index'])->name('kelas.index');
+        Route::get('/create', [KelasController::class, 'create'])->name('kelas.create');
+        Route::post('/store', [KelasController::class, 'store'])->name('kelas.store');
+        Route::post('/show', [KelasController::class, 'show'])->name('kelas.show');
+        Route::get('/edit', [KelasController::class, 'edit'])->name('kelas.edit');
+        Route::patch('/update', [KelasController::class, 'update'])->name('kelas.update');
+        Route::delete('/delete', [KelasController::class, 'destroy'])->name('kelas.destroy');
 
         Route::get('/siswa', [KelasSiswaController::class, 'index'])->name('kelas-siswa.index');
         Route::get('/siswa/create', [KelasSiswaController::class, 'create'])->name('kelas-siswa.create');
