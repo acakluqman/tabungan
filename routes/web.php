@@ -101,10 +101,10 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [UsersController::class, 'index'])->name('users.index');
         Route::get('/create', [UsersController::class, 'create'])->name('users.create');
-        Route::post('/create', [UsersController::class, 'store'])->name('users.store');
+        Route::post('/store', [UsersController::class, 'store'])->name('users.store');
         Route::get('/{user}/show', [UsersController::class, 'show'])->name('users.show');
         Route::get('/{user}/edit', [UsersController::class, 'edit'])->name('users.edit');
-        Route::patch('/{user}/update', [UsersController::class, 'update'])->name('users.update');
+        Route::patch('/{id}/update', [UsersController::class, 'update'])->name('users.update');
         Route::delete('/delete', [UsersController::class, 'destroy'])->name('users.destroy');
     });
 

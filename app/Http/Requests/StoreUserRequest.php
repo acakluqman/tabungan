@@ -27,6 +27,8 @@ class StoreUserRequest extends FormRequest
             'username' => 'required|unique:users,username',
             'nama' => 'required',
             'email' => 'required|email:rfc,dns|unique:users,email',
+            'password' => 'required|min:6',
+            'confirm' => 'required|same:password'
         ];
     }
 }

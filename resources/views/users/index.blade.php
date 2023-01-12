@@ -18,11 +18,11 @@
                     </h3>
                 </div>
             @endcan
-            <div class="card-body">
+            <div class="card-body table-responsive">
                 <table class="table table-stripped table-hover" id="users">
                     <thead>
                         <tr>
-                            <th width="5%" class="text-center">No.</th>
+                            <th style="width: 5%" class="text-center">No.</th>
                             <th>Username</th>
                             <th>Nama</th>
                             <th>Email</th>
@@ -37,16 +37,11 @@
     </section>
 @stop
 
-@section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
-@stop
-
 @section('js')
     <script>
         let table;
 
         $(function() {
-            // swal.fire('as');
             table = $('#users').DataTable({
                 processing: true,
                 serverSide: true,
@@ -89,15 +84,17 @@
                         data: 'role',
                         name: 'role',
                         render: function(data, type, row, meta) {
-                            if (row.role.id == 1) {
-                                return '<span class="badge bg-primary">' + row.role.name +
-                                    '</span>';
-                            } else if (row.role.id == 2) {
-                                return '<span class="badge bg-success">' + row.role.name +
-                                    '</span>';
-                            } else {
-                                return '<span class="badge bg-warning">' + row.role.name +
-                                    '</span>';
+                            if (row.role) {
+                                if (row.role.id == 1) {
+                                    return '<span class="badge bg-primary">' + row.role.name +
+                                        '</span>';
+                                } else if (row.role.id == 2) {
+                                    return '<span class="badge bg-success">' + row.role.name +
+                                        '</span>';
+                                } else {
+                                    return '<span class="badge bg-warning">' + row.role.name +
+                                        '</span>';
+                                }
                             }
                         }
                     },
@@ -112,8 +109,6 @@
             });
 
             $('#users').on('click', '#delete', function(e) {
-                console.log($(this).data('id'));
-
                 swal.fire({
                     title: "Lanjutkan hapus pengguna?",
                     text: "Data pengguna akan dihapus dari sistem. Lanjutkan?",
@@ -131,6 +126,16 @@
                                 id: $(this).data('id'),
                                 _token: "{{ csrf_token() }}",
                                 _method: 'delete',
+                            },
+                            success: function(data) {
+                                console.log(data)
+                                swal.fire({
+                                    title: 'Berhasil',
+                                    text: 'Berhasil hapus data user dari sistem!',
+                                    type: 'success'
+                                })
+
+                                $('#users').DataTable().draw();
                             }
                         });
                     }

@@ -6,7 +6,10 @@ use DataTables;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Contracts\Support\Renderable;
@@ -21,7 +24,7 @@ class UsersController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::with("roles")->get();
+            $data = User::whereHas('roles')->get();
 
             return Datatables::of($data)
                 ->addIndexColumn()
@@ -29,7 +32,7 @@ class UsersController extends Controller
                     return ['id' => $row->roles[0]['id'], 'name' => Str::ucfirst($row->roles[0]['name'])];
                 })
                 ->addColumn('action', function ($row) {
-                    return '<a href="javascript:void(0)" id="edit" data-id="' . $row->id_user . '" class="btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" id="delete" data-id="' . $row->id_user . '" class="btn btn-danger btn-sm">Delete</a>';
+                    return '<a href="' . route('users.edit', $row->id_user) . '" class="btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" id="delete" data-id="' . $row->id_user . '" class="btn btn-danger btn-sm">Delete</a>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -41,7 +44,7 @@ class UsersController extends Controller
     /**
      * Show form for creating user
      *
-     * @return \Illuminate\Http\Response
+     * @return Renderable
      */
     public function create()
     {
@@ -54,18 +57,33 @@ class UsersController extends Controller
      * @param User $user
      * @param StoreUserRequest $request
      *
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function store(User $user, StoreUserRequest $request)
+    public function store(StoreUserRequest $request)
     {
-        //For demo purposes only. When creating user or inviting a user
-        // you should create a generated random password and email it to the user
-        $user->create(array_merge($request->validated(), [
-            'password' => 'test'
-        ]));
+        DB::beginTransaction();
 
-        return redirect()->route('users.index')
-            ->withSuccess(__('User created successfully.'));
+        try {
+            $user = User::create([
+                'username' => strtolower($request->username),
+                'nama' => ucwords(strtolower($request->nama)),
+                'email' => strtolower($request->email),
+                'password' => Hash::make($request->password)
+            ]);
+
+            $role = Role::findById($request->id_role);
+            $user->assignRole([$role->id]);
+
+            DB::commit();
+
+            return redirect()->route('users.index')
+                ->with('success', 'User berhasil ditambahkan!');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return redirect()->route('users.index')
+                ->with('error', 'Gagal menambahkan pengguna. Silahkan ulangi kembali! ' . $th->getMessage());
+        }
     }
 
     /**
@@ -85,14 +103,14 @@ class UsersController extends Controller
      *
      * @param User $user
      *
-     * @return \Illuminate\Http\Response
+     * @return Renderable
      */
     public function edit(User $user)
     {
         return view('users.edit', [
             'user' => $user,
-            'userRole' => $user->roles->pluck('name')->toArray(),
-            'roles' => Role::latest()->get()
+            'userRole' => $user->roles->pluck('id')->toArray(),
+            'roles' => Role::whereNotIn('id', [3])->oldest()->get()
         ]);
     }
 
@@ -102,16 +120,20 @@ class UsersController extends Controller
      * @param User $user
      * @param UpdateUserRequest $request
      *
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
-    public function update(User $user, UpdateUserRequest $request)
+    public function update($id, UpdateUserRequest $request)
     {
-        $user->update($request->validated());
+        $user = User::findOrFail($id);
+        $user->update([
+            'username' => strtolower($request->username),
+            'nama' => ucwords(strtolower($request->nama)),
+            'email' => strtolower($request->email),
+        ]);
 
-        $user->syncRoles($request->get('role'));
+        $user->syncRoles($request->get('id_role'));
 
-        return redirect()->route('users.index')
-            ->withSuccess(__('User updated successfully.'));
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -119,14 +141,11 @@ class UsersController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return void
      */
     public function destroy(Request $request)
     {
         $user = User::findOrFail($request->id);
         $user->delete();
-
-        return redirect()->route('users.index')
-            ->with('success', 'Berhasil menghapus data user!');
     }
 }

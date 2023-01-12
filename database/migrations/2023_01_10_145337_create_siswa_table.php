@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'id_user');
             $table->timestamps();
 
-            $table->foreign('id_user')->references('id_user')->on('users')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreign('id_user')->references('id_user')->on('users')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
