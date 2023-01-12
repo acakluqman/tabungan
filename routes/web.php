@@ -4,6 +4,7 @@ use App\Http\Controllers\JenisTagihanController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KelasController;
+use App\Http\Controllers\KelasSiswaController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\UsersController;
@@ -80,7 +81,15 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
     /**
      * Kelas Routes
      */
-    Route::resource('kelas', KelasController::class)->names('kelas');
+
+    Route::group(['prefix' => 'kelas'], function () {
+        Route::resource('/', KelasController::class)->names('kelas');
+
+        Route::get('/siswa', [KelasSiswaController::class, 'index'])->name('kelas-siswa.index');
+        Route::get('/siswa/create', [KelasSiswaController::class, 'create'])->name('kelas-siswa.create');
+        Route::post('/siswa/store', [KelasSiswaController::class, 'store'])->name('kelas-siswa.store');
+        Route::delete('/siswa/delete', [KelasSiswaController::class, 'destroy'])->name('kelas-siswa.destroy');
+    });
 
     /**
      * Siswa Routes

@@ -17,6 +17,7 @@ class SiswaController extends Controller
     {
         if ($request->ajax()) {
             $data = Siswa::latest()->get();
+
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {

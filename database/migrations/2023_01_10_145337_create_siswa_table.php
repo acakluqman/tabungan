@@ -18,6 +18,7 @@ return new class extends Migration
             $table->id('id_siswa');
             $table->unsignedBigInteger('nis')->unique();
             $table->string('nama');
+            $table->enum('jk', ['L', 'P']);
             $table->string('alamat');
             $table->foreignIdFor(User::class, 'id_user');
             $table->timestamps();

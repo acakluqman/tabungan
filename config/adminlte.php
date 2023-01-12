@@ -328,8 +328,8 @@ return [
                 ],
                 [
                     'text' => 'Kelas Siswa',
-                    'url'  => 'kelas-siswa',
-                    'can'   => 'kelas.index'
+                    'url'  => 'kelas/siswa',
+                    'can'   => 'kelas-siswa.index'
                 ],
                 [
                     'text' => 'Jenis Tagihan',
@@ -431,12 +431,12 @@ return [
                 [
                     'type' => 'js',
                     'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js',
+                    'location' => 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js',
                 ],
                 [
                     'type' => 'css',
                     'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css',
+                    'location' => 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css',
                 ],
             ],
         ],

@@ -15,19 +15,19 @@
     <div class="wrapper">
 
         {{-- Preloader Animation --}}
-        @if($layoutHelper->isPreloaderEnabled())
+        @if ($layoutHelper->isPreloaderEnabled())
             @include('adminlte::partials.common.preloader')
         @endif
 
         {{-- Top Navbar --}}
-        @if($layoutHelper->isLayoutTopnavEnabled())
+        @if ($layoutHelper->isLayoutTopnavEnabled())
             @include('adminlte::partials.navbar.navbar-layout-topnav')
         @else
             @include('adminlte::partials.navbar.navbar')
         @endif
 
         {{-- Left Main Sidebar --}}
-        @if(!$layoutHelper->isLayoutTopnavEnabled())
+        @if (!$layoutHelper->isLayoutTopnavEnabled())
             @include('adminlte::partials.sidebar.left-sidebar')
         @endif
 
@@ -44,7 +44,7 @@
         @endif
 
         {{-- Right Control Sidebar --}}
-        @if(config('adminlte.right_sidebar'))
+        @if (config('adminlte.right_sidebar'))
             @include('adminlte::partials.sidebar.right-sidebar')
         @endif
 
@@ -54,4 +54,28 @@
 @section('adminlte_js')
     @stack('js')
     @yield('js')
+
+    @if ($message = Session::get('success'))
+        <script>
+            $(function() {
+                swal.fire('', '{{ $message }}', 'success');
+            })
+        </script>
+    @endif
+
+    @if ($message = Session::get('error'))
+        <script>
+            $(function() {
+                swal.fire('', '{{ $message }}', 'error');
+            })
+        </script>
+    @endif
+
+    @if ($message = Session::get('warning'))
+        <script>
+            $(function() {
+                swal.fire('', '{{ $message }}', 'warning');
+            })
+        </script>
+    @endif
 @stop
