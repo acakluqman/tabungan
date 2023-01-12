@@ -22,4 +22,11 @@ class Tabungan extends Model
      * @var string
      */
     protected $primaryKey = 'id_tabungan';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['tipe', 'id_siswa', 'nominal', 'keterangan', 'id_petugas'];
 }

@@ -18,16 +18,14 @@ return new class extends Migration
         Schema::create('transaksi', function (Blueprint $table) {
             $table->id('id_transaksi');
             $table->foreignIdFor(Tagihan::class, 'id_tagihan');
-            $table->enum('tipe_tx', ['debit', 'kredit']);
             $table->unsignedBigInteger('total_tagihan');
             $table->unsignedBigInteger('total_bayar');
             $table->dateTime('tgl_transaksi');
-            $table->foreignIdFor(User::class, 'validator');
-            $table->dateTime('tgl_validasi');
+            $table->foreignIdFor(User::class, 'id_petugas')->nullable();
             $table->timestamps();
 
             $table->foreign('id_tagihan')->references('id_tagihan')->on('tagihan')->onUpdate('cascade')->onDelete('restrict');
-            $table->foreign('validator')->references('id_user')->on('users')->onUpdate('cascade')->onDelete('restrict');
+            $table->foreign('id_petugas')->references('id_user')->on('users')->onUpdate('cascade')->onDelete('set null');
         });
     }
 

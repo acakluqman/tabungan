@@ -22,11 +22,12 @@
                 <table class="table table-striped table-hover" id="users">
                     <thead>
                         <tr>
-                            <th width="5%" class="text-center">No.</th>
+                            <th style="width: 5%;" class="text-center">No.</th>
                             <th>NIS</th>
                             <th>Nama</th>
+                            <th style="width: 5%;">LP</th>
                             <th>Alamat</th>
-                            <th></th>
+                            <th style="width: 10%;"></th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -73,6 +74,11 @@
                     {
                         data: 'nama',
                         name: 'nama'
+                    },
+                    {
+                        data: 'jk',
+                        name: 'jk',
+                        className: 'text-center'
                     },
                     {
                         data: 'alamat',

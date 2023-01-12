@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Tabungan Siswa')
+@section('title', 'Rekap Tabungan Siswa')
 
 @section('content_header')
-    <h1>Tabungan Siswa</h1>
+    <h1>Rekap Tabungan Siswa</h1>
 @stop
 
 @section('content')
@@ -11,7 +11,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    Rekap Saldo Tabungan Siswa
+                    Rekap Tabungan Siswa: {{ $siswa->nama }}
                 </h3>
             </div>
             <div class="card-body table-responsive">
@@ -19,11 +19,10 @@
                     <thead>
                         <tr>
                             <th style="width: 5%;" class="text-center">No.</th>
-                            <th>NIS</th>
-                            <th>Nama Siswa</th>
-                            <th style="width: 5%;">LP</th>
-                            <th>Kelas</th>
-                            <th>Saldo Tabungan</th>
+                            <th style="width: 20%;">Tanggal Transaksi</th>
+                            <th style="width: 20%;">Petugas</th>
+                            <th>Keterangan</th>
+                            <th style="width: 15%;">Nominal</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -31,6 +30,14 @@
             </div>
         </div>
     </section>
+@stop
+
+@section('css')
+    <style>
+        table.dataTable tbody td {
+            vertical-align: middle !important;
+        }
+    </style>
 @stop
 
 @section('js')
@@ -41,7 +48,7 @@
             table = $('#jenis').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('tabungan.index') }}",
+                ajax: "{{ route('tabungan.show', ['id' => $siswa->id_siswa]) }}",
                 language: {
                     processing: 'Loading...',
                     searchPlaceholder: 'Cari',
@@ -54,40 +61,42 @@
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
-                        className: 'text-center',
+                        className: 'text-center align-middle',
                         render: function(data) {
-                            return '<p class="mg-b-0">' + data + '.</p>';
+                            return data + '.';
                         },
                     },
                     {
-                        data: 'nis',
-                        name: 'nis',
+                        data: 'tipe',
+                        name: 'tipe',
                         render: function(data, type, row, meta) {
-                            return '<a href="/tabungan/' + row.id_siswa + '/show">' + row.nis + '</a>';
+                            if (row.tipe == 'debit') {
+                                return '<span class="badge bg-success">DEBIT</span><br/>' + row
+                                    .tgl_tx;
+                            } else {
+                                return '<span class="badge bg-danger">KREDIT</span><br/>' + row
+                                    .tgl_tx;
+                            }
                         }
                     },
                     {
-                        data: 'nama',
-                        name: 'nama',
+                        data: 'petugas',
+                        name: 'petugas',
                     },
                     {
-                        data: 'jk',
-                        name: 'jk',
-                    },
-                    {
-                        data: 'nama_kelas',
-                        name: 'nama_kelas',
+                        data: 'keterangan',
+                        name: 'keterangan',
                         render: function(data, type, row, meta) {
-                            return 'Kelas ' + row.nama_kelas;
+                            return row.keterangan ? row.keterangan : '-';
                         }
                     },
                     {
-                        data: 'saldo',
-                        name: 'saldo',
+                        data: 'nominal',
+                        name: 'nominal',
                         className: 'text-right',
+                        orderable: false,
                         render: function(data, type, row, meta) {
-                            return parseFloat(parseFloat(row.debit) - parseFloat(row
-                                .kredit)).toLocaleString('id-ID', {
+                            return parseFloat(row.nominal).toLocaleString('id-ID', {
                                 style: 'currency',
                                 currency: 'IDR',
                             });

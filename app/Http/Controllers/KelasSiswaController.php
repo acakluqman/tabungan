@@ -24,8 +24,8 @@ class KelasSiswaController extends Controller
      */
     public function index(Request $request)
     {
-        $tahun = Tahun::all();
-        $kelas = Kelas::all();
+        $tahun = Tahun::orderBy('thn_ajaran', 'desc')->get();
+        $kelas = Kelas::orderBy('nama', 'asc')->get();
 
         if ($request->ajax()) {
             $data = KelasSiswa::select('kelas_siswa.*', 'siswa.nis', 'siswa.nama as nama_siswa', DB::raw('UPPER(siswa.jk) as jk'), 'kelas.nama as nama_kelas')

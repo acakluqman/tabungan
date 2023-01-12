@@ -315,26 +315,31 @@ return [
             'text'    => 'DATA MASTER',
             'icon'    => 'fas fa-fw fa-server',
             'can'   => ['kelas', 'jenis-tagihan'],
+            'active' => ['tahun*', 'kelas', 'kelas/siswa', 'jenis-tagihan*'],
             'submenu' => [
                 [
                     'text' => 'Tahun Ajaran',
                     'url'  => 'tahun',
-                    'can'   => 'tahun.index'
+                    'can'   => 'tahun.index',
+                    'active' => ['tahun*']
                 ],
                 [
                     'text' => 'Data Kelas',
                     'url'  => 'kelas',
-                    'can'   => 'kelas.index'
+                    'can'   => 'kelas.index',
+                    'active' => ['kelas']
                 ],
                 [
                     'text' => 'Kelas Siswa',
                     'url'  => 'kelas/siswa',
-                    'can'   => 'kelas-siswa.index'
+                    'can'   => 'kelas-siswa.index',
+                    'active' => ['kelas/siswa', 'kelas/siswa/create']
                 ],
                 [
                     'text' => 'Jenis Tagihan',
                     'url'  => 'jenis-tagihan',
-                    'can'   => 'jenis-tagihan.index'
+                    'can'   => 'jenis-tagihan.index',
+                    'active' => ['jenis-tagihan*']
                 ],
             ]
         ],
@@ -343,30 +348,35 @@ return [
             'url'  => 'siswa',
             'icon' => 'far fa-fw fa-user',
             'can'  => 'siswa.index',
+            'active' => ['siswa*']
         ],
         [
             'text' => 'TABUNGAN SISWA',
             'url'  => 'tabungan',
             'icon' => 'fas fa-fw fa-wallet',
             'can'  => 'tabungan.index',
+            'active' => ['tabungan*']
         ],
         [
             'text' => 'TAGIHAN',
             'url'  => 'tagihan',
             'icon' => 'fas fa-fw fa-money-bill',
             'can'  => 'tagihan.index',
+            'active' => ['tagihan*']
         ],
         [
             'text' => 'TRANSAKSI',
             'url'  => 'transaksi',
             'icon' => 'fas fa-fw fa-cash-register',
             'can'  => 'transaksi.index',
+            'active' => ['transaksi*']
         ],
         [
             'text' => 'DATA PENGGUNA',
             'url'  => 'users',
             'icon' => 'fas fa-fw fa-users',
             'can'  => 'users.index',
+            'active' => ['users*']
         ],
     ],
 
