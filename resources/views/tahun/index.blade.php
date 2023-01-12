@@ -18,8 +18,8 @@
                     </h3>
                 </div>
             @endcan
-            <div class="card-body">
-                <table class="table table-striped table-hover" id="tahun">
+            <div class="card-body table-responsive">
+                <table class="table table-striped table-hover" id="tahunajaran">
                     <thead>
                         <tr>
                             <th style="width: 5%">No.</th>
@@ -57,8 +57,8 @@
                                         placeholder="Tahun Ajaran" required>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="thn_ajaran2" class="control-label">Tahun Ajaran</label>
-                                    <input type="text" class="form-control" name="thn_ajaran2" id="thn_ajaran2"
+                                    <label for="thn_ajaran2" class="control-label">&nbsp;</label>
+                                    <input type="text" class="form-control pt-1" name="thn_ajaran2" id="thn_ajaran2"
                                         placeholder="Tahun Ajaran" readonly>
                                 </div>
                             </div>
@@ -96,7 +96,67 @@
         </div>
     @endcan
 
-    @can('tahun.delete')
+    @can('tahun.show')
+        <div class="modal fade" id="modal-edit">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Perbarui Ajaran Baru</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('tahun.update') }}" id="form" method="post">
+                        @method('patch')
+                        @csrf
+                        <div class="modal-body">
+                            <div id="loader">
+                                <div class="d-flex justify-content-center">
+                                    <span class="fa-stack fa-md">
+                                        <i class="fas fa-spinner fa-spin fa-stack-2x fa-fw"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div id="form-edit">
+                                <div class="form-group">
+                                    <label for="thn_ajaran" class="control-label">Tahun Ajaran</label>
+                                    <input type="hidden" name="thn_ajaran" id="thn_ajaran" readonly>
+                                    <input type="text" class="form-control" name="tahun" id="tahun"
+                                        placeholder="Tahun Ajaran" readonly required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tgl_mulai" class="control-label">Tanggal Mulai</label>
+                                    <input type="date" class="form-control" name="tgl_mulai" id="tgl_mulai"
+                                        value="" placeholder="Tanggal Mulai" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="tgl_selesai" class="control-label">Tanggal Selesai</label>
+                                    <input type="date" class="form-control" name="tgl_selesai" id="tgl_selesai"
+                                        value="" placeholder="Tanggal Selesai" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="status" class="control-label">Status</label>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="is_aktif" id="status1"
+                                            value="1" checked="">
+                                        <label class="form-check-label">Aktif</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="is_aktif" id="status0"
+                                            value="0">
+                                        <label class="form-check-label">Tidak Aktif</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-success">Perbarui</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     @endcan
 @stop
 
@@ -105,7 +165,7 @@
         let table;
 
         $(function() {
-            table = $('#tahun').DataTable({
+            table = $('#tahunajaran').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('tahun.index') }}",
@@ -143,9 +203,9 @@
                         className: 'text-center',
                         render: function(data, type, row, meta) {
                             if (row.is_aktif == 1) {
-                                return '<span class="badge bg-success">Aktif</span>';
+                                return '<span class="text-success">Aktif</span>';
                             } else {
-                                return '<span class="badge bg-danger">Tidak Aktif</span>';
+                                return '<span class="text-danger">Tidak Aktif</span>';
                             }
                         }
                     },
@@ -167,7 +227,46 @@
                 }
             })
 
-            $('#tahun').on('click', '#delete', function(e) {
+            $('#tahunajaran').on('click', '#edit', function(e) {
+                console.log($(this).data('id'));
+                var loader = document.getElementById('loader');;
+                var form = document.getElementById('form-edit');
+
+                $('#modal-edit').modal('show');
+
+                loader.style.display = 'block';
+                form.style.display = 'none';
+
+                $.ajax({
+                    url: "{{ route('tahun.show') }}",
+                    method: 'post',
+                    data: {
+                        id: $(this).data('id'),
+                        _token: "{{ csrf_token() }}",
+                        _method: 'post',
+                    },
+                    success: function(data, textStatus, xhr) {
+                        console.log(typeof data.is_aktif)
+                        if (data) {
+                            loader.style.display = 'none';
+                            form.style.display = 'block';
+
+                            $('#form-edit #thn_ajaran').val(data.thn_ajaran);
+                            $('#form-edit #tahun').val(data.thn_ajaran + '/' + (parseInt(data
+                                .thn_ajaran)));
+                            $('#form-edit #tgl_mulai').val(data.tgl_mulai);
+                            $('#form-edit #tgl_selesai').val(data.tgl_selesai);
+                            if (parseInt(data.is_aktif)) {
+                                $("#form-edit #status1").prop("checked", true);
+                            } else {
+                                $("#form-edit #status0").prop("checked", true);
+                            }
+                        }
+                    },
+                });
+            });
+
+            $('#tahunajaran').on('click', '#delete', function(e) {
                 console.log($(this).data('id'));
 
                 swal.fire({
@@ -188,7 +287,7 @@
                                 _token: "{{ csrf_token() }}",
                                 _method: 'delete',
                             },
-                            success: function(data) {
+                            success: function(data, textStatus, xhr) {
                                 swal.fire({
                                     title: 'Berhasil',
                                     text: 'Berhasil hapus data tahun ajaran!',
@@ -196,6 +295,18 @@
                                 });
 
                                 $('#tahun').DataTable().ajax.reload();
+                            },
+                            complete: function(xhr, textStatus) {
+                                var result = JSON.parse(xhr.responseText);
+
+                                if (xhr.status != 200) {
+                                    swal.fire({
+                                        title: 'Oops...',
+                                        text: 'Gagal menghapus data tahun ajaran! Error: ' +
+                                            result.message,
+                                        type: 'error'
+                                    });
+                                }
                             }
                         });
                     }

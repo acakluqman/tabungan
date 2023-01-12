@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreTahunRequest;
 use DataTables;
 use Carbon\Carbon;
 use App\Models\Tahun;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\StoreTahunRequest;
+use Illuminate\Contracts\Support\Renderable;
 
 class TahunController extends Controller
 {
@@ -54,11 +56,22 @@ class TahunController extends Controller
      */
     public function store(Tahun $tahun, StoreTahunRequest $request)
     {
-        if ($request->is_aktif) {
-            Tahun::where('is_aktif', 1)->first()->update(['is_aktif' => 0]);
-        }
+        DB::beginTransaction();
+        try {
+            if ($request->is_aktif) {
+                Tahun::where('is_aktif', 1)->first()->update(['is_aktif' => 0]);
+            }
 
-        Tahun::create($request->validated());
+            Tahun::create($request->validated());
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal menyimpan tahun ajaran! Error: ' . $th->getMessage());
+        }
 
         return redirect()
             ->route('tahun.index')
@@ -68,12 +81,18 @@ class TahunController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Tahun  $tahun
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return JsonResponse
      */
-    public function show(Tahun $tahun)
+    public function show(Request $request)
     {
-        //
+        $tahun = [];
+        if ($request->ajax()) {
+            $tahun = Tahun::where('thn_ajaran', $request->id)->first();
+        }
+
+        return response()->json($tahun);
     }
 
     /**
@@ -91,12 +110,36 @@ class TahunController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Tahun  $tahun
-     * @return \Illuminate\Http\Response
+     *
+     * @return RedirectResponse
      */
-    public function update(Request $request, Tahun $tahun)
+    public function update(Request $request)
     {
-        //
+        // dd($request);
+        DB::beginTransaction();
+
+        try {
+            if ($request->is_aktif) {
+                Tahun::where('is_aktif', 1)->first()->update(['is_aktif' => 0]);
+            }
+
+            Tahun::where('thn_ajaran', $request->thn_ajaran)
+                ->update([
+                    'tgl_mulai' => $request->tgl_mulai,
+                    'tgl_selesai' => $request->tgl_selesai,
+                    'is_aktif' => $request->is_aktif
+                ]);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal memperbarui data tahun ajaran! Error: ' . $th->getMessage());
+        }
+
+        return redirect()->back()->with('success', 'Berhasil memperbarui data tahun ajaran!');
     }
 
     /**

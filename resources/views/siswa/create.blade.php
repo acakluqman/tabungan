@@ -9,7 +9,7 @@
 @section('content')
     <section class="content">
         <div class="card">
-            <div class="card-body">
+            <div class="card-body table-responsive">
 
             </div>
         </div>

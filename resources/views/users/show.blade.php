@@ -14,7 +14,7 @@
                         class="fas fa-pencil-alt"></i> Edit
                     Pengguna</a>
             </div>
-            <div class="card-body">
+            <div class="card-body table-responsive">
                 <div class="row">
                     <div class="col-md-6">
                         <label for="username" class="control-label">Username</label>

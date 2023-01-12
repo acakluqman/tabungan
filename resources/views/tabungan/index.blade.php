@@ -14,7 +14,7 @@
                     Rekap Saldo Tabungan Siswa
                 </h3>
             </div>
-            <div class="card-body">
+            <div class="card-body table-responsive">
                 <table class="table table-striped table-hover" id="jenis">
                     <thead>
                         <tr>

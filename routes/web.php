@@ -53,9 +53,8 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
     Route::group(['prefix' => 'tahun'], function () {
         Route::get('/', [TahunController::class, 'index'])->name('tahun.index');
         Route::get('/create', [TahunController::class, 'create'])->name('tahun.create');
-        Route::post('/create', [TahunController::class, 'store'])->name('tahun.store');
-        Route::get('/{id}/show', [TahunController::class, 'show'])->name('tahun.show');
-        Route::get('/{id}/edit', [TahunController::class, 'edit'])->name('tahun.edit');
+        Route::post('/store', [TahunController::class, 'store'])->name('tahun.store');
+        Route::post('/show', [TahunController::class, 'show'])->name('tahun.show');
         Route::patch('/update', [TahunController::class, 'update'])->name('tahun.update');
         Route::delete('/delete', [TahunController::class, 'destroy'])->name('tahun.destroy');
     });

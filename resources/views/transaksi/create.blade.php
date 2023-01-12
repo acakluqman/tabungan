@@ -15,7 +15,7 @@
                 </h3>
             </div>
 
-            <div class="card-body">
+            <div class="card-body table-responsive">
                 <form action="" id="form" method="post">
                     @method('post')
                     @csrf
