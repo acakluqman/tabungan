@@ -19,8 +19,8 @@ return new class extends Migration
             $table->id('id_transaksi');
             $table->foreignIdFor(Tagihan::class, 'id_tagihan');
             $table->enum('tipe_tx', ['debit', 'kredit']);
-            $table->float('total_tagihan');
-            $table->float('total_bayar');
+            $table->unsignedBigInteger('total_tagihan');
+            $table->unsignedBigInteger('total_bayar');
             $table->dateTime('tgl_transaksi');
             $table->foreignIdFor(User::class, 'validator');
             $table->dateTime('tgl_validasi');

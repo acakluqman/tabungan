@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\Support\Renderable;
+use DataTables;
+use App\Models\Tahun;
+use App\Models\JenisTagihan;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\Support\Renderable;
 
 class JenisTagihanController extends Controller
 {
@@ -12,30 +15,55 @@ class JenisTagihanController extends Controller
      *
      * @return Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('jenis-tagihan.index');
+        $tahun = Tahun::orderBy('thn_ajaran', 'desc')->get();
+
+        if ($request->ajax()) {
+            $data = JenisTagihan::where('thn_ajaran', $request->thn_ajaran)->get();
+
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('tagihan', function ($row) {
+                    return number_format($row->jml_tagihan);
+                })
+                ->addColumn('action', function ($row) {
+                    return '<a href="' . route('jenis-tagihan.edit', $row->id_jenis_tagihan) . '" class="btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" id="delete" data-id="' . $row->id_jenis_tagihan . '" class="btn btn-danger btn-sm">Delete</a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('jenis-tagihan.index', compact('tahun'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Renderable
      */
     public function create()
     {
-        //
+        $tahun = Tahun::orderBy('thn_ajaran', 'desc')->get();
+
+        return view('jenis-tagihan.create', compact('tahun'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        JenisTagihan::create([
+            'thn_ajaran' => $request->thn_ajaran,
+            'nama' => $request->nama,
+            'jml_tagihan' => $request->jml_tagihan
+        ]);
+
+        return redirect()->route('jenis-tagihan.index')->with('success', 'Berhasil menambahkan jenis tagihan!');
     }
 
     /**
@@ -53,33 +81,47 @@ class JenisTagihanController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Renderable
      */
     public function edit($id)
     {
-        //
+        $tahun = Tahun::orderBy('thn_ajaran', 'desc')->get();
+        $jenistagihan = JenisTagihan::find($id);
+
+        return view('jenis-tagihan.edit', compact('tahun', 'jenistagihan'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request  $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
-        //
+        $jenis = JenisTagihan::findOrFail($id);
+
+        $jenis->update([
+            'thn_ajaran' => $request->thn_ajaran,
+            'nama' => $request->nama,
+            'jml_tagihan' => $request->jml_tagihan,
+        ]);
+
+        return redirect()->back()->with('success', 'Berhasil memperbarui jenis tagihan!');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     *
+     * @return void
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $jenis = JenisTagihan::findOrFail($request->id);
+        $jenis->delete();
     }
 }

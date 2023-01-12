@@ -73,9 +73,17 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
     });
 
     /**
-     * Kelas Routes
+     * Jenis Tagihan Routes
      */
-    Route::resource('jenis-tagihan', JenisTagihanController::class)->names('jenis-tagihan');
+    Route::group(['prefix' => 'jenis-tagihan'], function () {
+        Route::get('/', [JenisTagihanController::class, 'index'])->name('jenis-tagihan.index');
+        Route::get('/create', [JenisTagihanController::class, 'create'])->name('jenis-tagihan.create');
+        Route::post('/store', [JenisTagihanController::class, 'store'])->name('jenis-tagihan.store');
+        Route::get('/{id}/show', [JenisTagihanController::class, 'show'])->name('jenis-tagihan.show');
+        Route::get('/{id}/edit', [JenisTagihanController::class, 'edit'])->name('jenis-tagihan.edit');
+        Route::patch('/{id}/update', [JenisTagihanController::class, 'update'])->name('jenis-tagihan.update');
+        Route::delete('/delete', [JenisTagihanController::class, 'destroy'])->name('jenis-tagihan.destroy');
+    });
 
     /**
      * Kelas Routes

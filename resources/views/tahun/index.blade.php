@@ -297,9 +297,8 @@
                                 $('#tahun').DataTable().ajax.reload();
                             },
                             complete: function(xhr, textStatus) {
-                                var result = JSON.parse(xhr.responseText);
-
                                 if (xhr.status != 200) {
+                                    var result = JSON.parse(xhr.responseText);
                                     swal.fire({
                                         title: 'Oops...',
                                         text: 'Gagal menghapus data tahun ajaran! Error: ' +

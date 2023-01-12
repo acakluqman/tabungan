@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id('id_jenis_tagihan');
             $table->foreignIdFor(Tahun::class, 'thn_ajaran');
             $table->string('nama');
-            $table->float('jml_tagihan');
+            $table->unsignedBigInteger('jml_tagihan');
             $table->timestamps();
 
             $table->foreign('thn_ajaran')->references('thn_ajaran')->on('tahun_ajaran')->onUpdate('cascade')->onDelete('restrict');
