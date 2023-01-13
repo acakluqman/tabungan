@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use DataTables;
+use Carbon\Carbon;
 use App\Models\Siswa;
 use App\Models\Tahun;
 use App\Models\Tabungan;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\Support\Renderable;
 
 class TabunganController extends Controller
@@ -52,22 +54,44 @@ class TabunganController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $siswa = Siswa::orderBy('nama', 'asc')->get();
+
+        return view('tabungan.create', compact('siswa'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        $debit = Tabungan::where('id_siswa', $request->siswa)->where('tipe', 'debit')->sum('nominal');
+        $kredit = Tabungan::where('id_siswa', $request->siswa)->where('tipe', 'kredit')->sum('nominal');
+        $saldo = (intval($debit) - intval($kredit));
+
+        if ($request->tipe == 'kredit' && $request->nominal > $saldo) {
+            return redirect()->back()->with('warning', 'Saldo tabungan siswa tidak mencukupi!');
+        }
+
+        try {
+            Tabungan::create([
+                'tipe' => $request->tipe,
+                'id_siswa' => $request->siswa,
+                'nominal' => $request->nominal,
+                'keterangan' => $request?->keterangan,
+                'tgl_transaksi' => new \DateTime(),
+                'id_petugas' => Auth::user()->id_user,
+            ]);
+
+            return redirect()->back()->with('success', 'Berhasil menyimpan transaksi!');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', 'Gagal menyimpan transaksi. Silahkan ulangi kembali! Error: ' . $th->getMessage());
+        }
     }
 
     /**
@@ -130,5 +154,17 @@ class TabunganController extends Controller
     public function destroy(Tabungan $tabungan)
     {
         //
+    }
+
+    public function saldo(Request $request)
+    {
+        if ($request->ajax()) {
+            $debit = Tabungan::where('id_siswa', $request->id)->where('tipe', 'debit')->sum('nominal');
+            $kredit = Tabungan::where('id_siswa', $request->id)->where('tipe', 'kredit')->sum('nominal');
+
+            $saldo = (intval($debit) - intval($kredit));
+
+            return response()->json(['saldo' => $saldo]);
+        }
     }
 }

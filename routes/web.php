@@ -40,11 +40,13 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
     Route::group(['prefix' => 'tabungan'], function () {
         Route::get('/', [TabunganController::class, 'index'])->name('tabungan.index');
         Route::get('/create', [TabunganController::class, 'create'])->name('tabungan.create');
-        Route::post('/create', [TabunganController::class, 'store'])->name('tabungan.store');
+        Route::post('/store', [TabunganController::class, 'store'])->name('tabungan.store');
         Route::get('/{id}/show', [TabunganController::class, 'show'])->name('tabungan.show');
         Route::get('/{id}/edit', [TabunganController::class, 'edit'])->name('tabungan.edit');
         Route::patch('/update', [TabunganController::class, 'update'])->name('tabungan.update');
         Route::delete('/delete', [TabunganController::class, 'destroy'])->name('tabungan.destroy');
+
+        Route::post('/saldo', [TabunganController::class, 'saldo'])->name('tabungan.saldo');
     });
 
     /**

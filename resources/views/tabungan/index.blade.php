@@ -9,11 +9,13 @@
 @section('content')
     <section class="content">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    Rekap Saldo Tabungan Siswa
-                </h3>
-            </div>
+            @can('transaksi.create')
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <a href="{{ route('tabungan.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Transaksi Baru</a>
+                    </h3>
+                </div>
+            @endcan
             <div class="card-body table-responsive">
                 <table class="table table-striped table-hover" id="jenis">
                     <thead>
@@ -63,7 +65,8 @@
                         data: 'nis',
                         name: 'nis',
                         render: function(data, type, row, meta) {
-                            return '<a href="/tabungan/' + row.id_siswa + '/show">' + row.nis + '</a>';
+                            return '<a href="/tabungan/' + row.id_siswa + '/show">' + row.nis +
+                                '</a>';
                         }
                     },
                     {

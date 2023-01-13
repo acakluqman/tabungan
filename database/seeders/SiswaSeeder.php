@@ -51,7 +51,7 @@ class SiswaSeeder extends Seeder
             for ($i = 0; $i < 25; $i++) {
                 $faker = Faker::create('id_ID');
 
-                $nis = $faker->numerify('######');
+                $nis = $faker->numerify('##########');
                 $gender = $faker->randomElement(['male', 'female']);
                 $nama = $faker->firstName($gender) . ' ' . $faker->lastName();
 
@@ -72,7 +72,7 @@ class SiswaSeeder extends Seeder
                     'id_user' => $user->id_user
                 ]);
 
-                $kelassiswa = KelasSiswa::create([
+                KelasSiswa::create([
                     'id_kelas' => $kelas->id_kelas,
                     'id_siswa' => $siswa->id_siswa,
                     'thn_ajaran' => $tahun->thn_ajaran,

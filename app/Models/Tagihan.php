@@ -22,4 +22,11 @@ class Tagihan extends Model
      * @var string
      */
     protected $primaryKey = 'id_tagihan';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['id_jenis_tagihan', 'id_jenis_tagihan', 'id_siswa', 'tgl_tagihan', 'tgl_jatuh_tempo', 'id_status_tagihan'];
 }

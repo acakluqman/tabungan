@@ -28,5 +28,5 @@ class Tabungan extends Model
      *
      * @var array
      */
-    protected $fillable = ['tipe', 'id_siswa', 'nominal', 'keterangan', 'id_petugas'];
+    protected $fillable = ['tipe', 'id_siswa', 'nominal', 'keterangan', 'tgl_transaksi', 'id_petugas'];
 }

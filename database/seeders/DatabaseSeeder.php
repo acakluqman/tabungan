@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PetugasSeeder::class,
             SiswaSeeder::class,
             TabunganSeeder::class,
+            TagihanSeeder::class,
         ]);
     }
 }

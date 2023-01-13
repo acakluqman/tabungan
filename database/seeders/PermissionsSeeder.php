@@ -28,10 +28,12 @@ class PermissionsSeeder extends Seeder
             'siswa.show',
             'tabungan.index',
             'tabungan.show',
+            'tabungan.saldo',
             'tagihan.index',
             'tagihan.show',
             'transaksi.index',
             'transaksi.show',
+
         ]);
 
         $siswa->syncPermissions([
