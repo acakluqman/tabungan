@@ -9,17 +9,17 @@
 @section('content')
     <section class="content">
         <div class="card">
-            @can('users.create')
+            @can('siswa.create')
                 <div class="card-header">
                     <h3 class="card-title">
-                        <a href="{{ route('users.create') }}" class="btn btn-primary">
+                        <a href="{{ route('siswa.create') }}" class="btn btn-primary">
                             <i class="fas fa-fw fa-plus"></i> Tambah Siswa
                         </a>
                     </h3>
                 </div>
             @endcan
             <div class="card-body table-responsive">
-                <table class="table table-striped table-hover" id="users">
+                <table class="table table-striped table-hover" id="siswa">
                     <thead>
                         <tr>
                             <th style="width: 5%;" class="text-center">No.</th>
@@ -37,16 +37,12 @@
     </section>
 @stop
 
-@section('css')
-    <link rel="stylesheet" href="/css/admin_custom.css">
-@stop
-
 @section('js')
     <script>
         let table;
 
         $(function() {
-            table = $('#users').DataTable({
+            table = $('#siswa').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('siswa.index') }}",
@@ -93,5 +89,39 @@
                 ]
             });
         })
+
+        $('#siswa').on('click', '#delete', function(e) {
+            swal.fire({
+                title: "Lanjutkan hapus siswa?",
+                text: "Data siswa akan dihapus dari sistem. Lanjutkan?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: 'Ya, lanjutkan',
+                cancelButtonText: 'Batalkan',
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "{{ route('users.destroy') }}",
+                        method: 'post',
+                        data: {
+                            id: $(this).data('id'),
+                            _token: "{{ csrf_token() }}",
+                            _method: 'delete',
+                        },
+                        success: function(data) {
+                            console.log(data)
+                            swal.fire({
+                                title: 'Berhasil',
+                                text: 'Berhasil hapus data siswa dari sistem!',
+                                type: 'success'
+                            })
+
+                            $('#siswa').DataTable().draw();
+                        }
+                    });
+                }
+            });
+        });
     </script>
 @stop

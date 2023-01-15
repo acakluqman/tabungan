@@ -15,8 +15,8 @@ class PermissionsSeeder extends Seeder
      */
     public function run()
     {
-        $petugas = Role::where(['name' => 'petugas'])->first();
-        $siswa = Role::where(['name' => 'siswa'])->first();
+        $petugas = Role::findById(2);
+        $siswa = Role::findById(3);
 
         $petugas->syncPermissions([
             'home',

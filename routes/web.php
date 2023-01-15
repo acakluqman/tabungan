@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SiswaController;
@@ -32,7 +33,7 @@ Route::get('/', function () {
 Auth::routes(['register' => false]);
 
 Route::group(['middleware' => ['auth', 'permission']], function () {
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     /**
      * Tabungan Routes
@@ -111,11 +112,11 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
     Route::group(['prefix' => 'siswa'], function () {
         Route::get('/', [SiswaController::class, 'index'])->name('siswa.index');
         Route::get('/create', [SiswaController::class, 'create'])->name('siswa.create');
-        Route::post('/create', [SiswaController::class, 'store'])->name('siswa.store');
-        Route::get('/{siswa}/show', [SiswaController::class, 'show'])->name('siswa.show');
-        Route::get('/{siswa}/edit', [SiswaController::class, 'edit'])->name('siswa.edit');
-        Route::patch('/{siswa}/update', [SiswaController::class, 'update'])->name('siswa.update');
-        Route::delete('/{siswa}/delete', [SiswaController::class, 'destroy'])->name('siswa.destroy');
+        Route::post('/store', [SiswaController::class, 'store'])->name('siswa.store');
+        Route::get('/{id}/show', [SiswaController::class, 'show'])->name('siswa.show');
+        Route::get('/{id}/edit', [SiswaController::class, 'edit'])->name('siswa.edit');
+        Route::patch('/{id}/update', [SiswaController::class, 'update'])->name('siswa.update');
+        Route::delete('/delete', [SiswaController::class, 'destroy'])->name('siswa.destroy');
     });
 
     /**
