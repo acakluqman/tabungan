@@ -314,7 +314,7 @@ return [
         [
             'text'    => 'DATA MASTER',
             'icon'    => 'fas fa-fw fa-server',
-            'can'   => ['kelas', 'jenis-tagihan'],
+            'can'   => ['kelas.index', 'jenis-tagihan.index', 'tahun.index', 'kelas-siswa.index'],
             'active' => ['tahun*', 'kelas', 'kelas/siswa', 'jenis-tagihan*'],
             'submenu' => [
                 [

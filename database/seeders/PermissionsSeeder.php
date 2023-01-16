@@ -22,6 +22,9 @@ class PermissionsSeeder extends Seeder
             'home',
             'kelas.index',
             'kelas.show',
+            'kelas-siswa.index',
+            'tahun.index',
+            'tahun.show',
             'jenis-tagihan.index',
             'jenis-tagihan.show',
             'siswa.index',
@@ -33,7 +36,6 @@ class PermissionsSeeder extends Seeder
             'tagihan.show',
             'transaksi.index',
             'transaksi.show',
-
         ]);
 
         $siswa->syncPermissions([
