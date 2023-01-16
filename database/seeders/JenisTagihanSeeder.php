@@ -23,17 +23,23 @@ class JenisTagihanSeeder extends Seeder
             [
                 'thn_ajaran' => $tahun->thn_ajaran,
                 'nama' => 'SPP Bulanan',
-                'jml_tagihan' => 150000
+                'jml_tagihan' => 150000,
+                'periode' => 'bulanan',
+                'tgl_jatuh_tempo' => 15,
             ],
             [
                 'thn_ajaran' => $tahun->thn_ajaran,
                 'nama' => 'Uang Kegiatan Tahunan',
-                'jml_tagihan' => 25000
+                'jml_tagihan' => 25000,
+                'periode' => 'sekali_bayar',
+                'tgl_jatuh_tempo' => null,
             ],
             [
                 'thn_ajaran' => $tahun->thn_ajaran,
                 'nama' => 'Buku dan Perlengkapan Sekolah',
-                'jml_tagihan' => 150000
+                'jml_tagihan' => 150000,
+                'periode' => 'sekali_bayar',
+                'tgl_jatuh_tempo' => null,
             ],
         ];
 

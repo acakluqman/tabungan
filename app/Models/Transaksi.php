@@ -22,4 +22,11 @@ class Transaksi extends Model
      * @var string
      */
     protected $primaryKey = 'id_transaksi';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['id_tagihan', 'total_tagihan', 'total_bayar', 'tgl_transaksi', 'id_petugas'];
 }

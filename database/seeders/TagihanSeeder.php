@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Siswa;
+use App\Models\Tahun;
 use App\Models\Tagihan;
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
@@ -18,11 +19,11 @@ class TagihanSeeder extends Seeder
     public function run()
     {
         $siswa = Siswa::all();
-
+        $tahun = Tahun::where('is_aktif', 1)->first();
         $faker = Faker::create('id_ID');
 
         foreach ($siswa as $row) {
-            $period = \Carbon\CarbonPeriod::create('2022-07-11', '1 month', '2023-07-10');
+            $period = \Carbon\CarbonPeriod::create($tahun->tgl_mulai, '1 month', $tahun->tgl_selesai);
 
             foreach ($period as $key => $dt) {
                 if ($key == 0) {

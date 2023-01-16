@@ -47,6 +47,7 @@
                                     <th>Tahun Ajaran</th>
                                     <th>Nama Tagihan</th>
                                     <th>Jumlah Tagihan</th>
+                                    <th>Periode Tagihan</th>
                                     <th style="width: 10%"></th>
                                 </tr>
                             </thead>
@@ -99,16 +100,23 @@
                     },
                     {
                         data: 'nama',
-                        name: 'nama',
-                        render: function(data, type, row, meta) {
-                            return 'Kelas ' + row.nama;
-                        }
-                    },
+                        name: 'nama',                    },
                     {
                         data: 'jml_tagihan',
                         name: 'jml_tagihan',
                         render: function(data, type, row, meta) {
                             return 'Rp. ' + row.tagihan;
+                        }
+                    },
+                    {
+                        data: 'periode',
+                        name: 'periode',
+                        render: function(data, type, row, meta) {
+                            if (row.periode == 'bulanan') {
+                                return 'Bulanan';
+                            } else {
+                                return 'Sekali Bayar';
+                            }
                         }
                     },
                     {

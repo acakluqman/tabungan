@@ -44,6 +44,22 @@
                     </div>
 
                     <div class="form-group row">
+                        <label for="periode" class="col-sm-2 col-form-label">Periode Tagihan</label>
+                        <div class="col-sm-5">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="periode" id="bulanan"
+                                    value="bulanan">
+                                <label class="form-check-label">Bulanan</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="periode" id="sekali_bayar"
+                                    value="sekali_bayar" checked>
+                                <label class="form-check-label">Sekali Bayar</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
                         <label for="submit" class="col-sm-2 col-form-label">&nbsp;</label>
                         <div class="col-sm-5">
                             <a href="{{ route('jenis-tagihan.index') }}" class="btn btn-danger">Kembali</a>

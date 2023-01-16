@@ -28,5 +28,5 @@ class JenisTagihan extends Model
      *
      * @var array
      */
-    protected $fillable = ['id_jenis_tagihan', 'thn_ajaran', 'nama', 'jml_tagihan'];
+    protected $fillable = ['id_jenis_tagihan', 'thn_ajaran', 'nama', 'jml_tagihan', 'periode', 'tgl_jatuh_tempo'];
 }

@@ -60,7 +60,9 @@ class JenisTagihanController extends Controller
         JenisTagihan::create([
             'thn_ajaran' => $request->thn_ajaran,
             'nama' => $request->nama,
-            'jml_tagihan' => $request->jml_tagihan
+            'jml_tagihan' => $request->jml_tagihan,
+            'periode' => $request->periode,
+            'tgl_jatuh_tempo' => $request->periode == 'bulanan' ? 15 : null,
         ]);
 
         return redirect()->route('jenis-tagihan.index')->with('success', 'Berhasil menambahkan jenis tagihan!');

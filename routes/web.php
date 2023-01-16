@@ -68,7 +68,7 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
     Route::group(['prefix' => 'tagihan'], function () {
         Route::get('/', [TagihanController::class, 'index'])->name('tagihan.index');
         Route::get('/create', [TagihanController::class, 'create'])->name('tagihan.create');
-        Route::post('/create', [TagihanController::class, 'store'])->name('tagihan.store');
+        Route::post('/store', [TagihanController::class, 'store'])->name('tagihan.store');
         Route::get('/{tagihan}/show', [TagihanController::class, 'show'])->name('tagihan.show');
         Route::get('/{tagihan}/edit', [TagihanController::class, 'edit'])->name('tagihan.edit');
         Route::patch('/{tagihan}/update', [TagihanController::class, 'update'])->name('tagihan.update');
