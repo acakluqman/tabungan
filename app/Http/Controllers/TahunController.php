@@ -35,6 +35,7 @@ class TahunController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
+
         return view('tahun.index');
     }
 

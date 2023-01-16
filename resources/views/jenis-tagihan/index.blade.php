@@ -48,7 +48,9 @@
                                     <th>Nama Tagihan</th>
                                     <th>Jumlah Tagihan</th>
                                     <th>Periode Tagihan</th>
-                                    <th style="width: 10%"></th>
+                                    @can(['jenis-tagihan.update', 'jenis-tagihan.destroy'])
+                                        <th style="width: 10%"></th>
+                                    @endcan
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -63,6 +65,7 @@
 @section('js')
     <script>
         let table;
+        var jenis_action = "{{ Gate::check('jenis-tagihan.update') || Gate::check('jenis-tagihan.destroy') ? 1 : 0 }}";
 
         $(function() {
             table = $('#jenistagihan').DataTable({
@@ -100,7 +103,8 @@
                     },
                     {
                         data: 'nama',
-                        name: 'nama',                    },
+                        name: 'nama',
+                    },
                     {
                         data: 'jml_tagihan',
                         name: 'jml_tagihan',
@@ -124,7 +128,8 @@
                         name: 'action',
                         className: 'text-center',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        visible: parseInt(jenis_action)
                     },
                 ]
             });

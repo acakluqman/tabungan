@@ -59,7 +59,9 @@
                                     <th>Nama Siswa</th>
                                     <th>LP</th>
                                     <th>Kelas</th>
-                                    <th style="width: 10%"></th>
+                                    @can(['kelas-siswa.destroy'])
+                                        <th style="width: 10%"></th>
+                                    @endcan
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -74,6 +76,7 @@
 @section('js')
     <script>
         let table;
+        var kelas_action = "{{ Gate::check('kelas-siswa.destroy') ? 1 : 0 }}";
 
         $(function() {
             table = $('#tkelas').DataTable({
@@ -129,6 +132,7 @@
                         name: 'action',
                         orderable: false,
                         className: 'text-center',
+                        visible: parseInt(kelas_action)
                     }
                 ]
             });

@@ -26,7 +26,9 @@
                             <th>Tahun Ajaran</th>
                             <th>Tanggal Efektif</th>
                             <th>Status</th>
-                            <th></th>
+                            @can(['tahun.update', 'tahun.destroy'])
+                                <th style="width: 10%;"></th>
+                            @endcan
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -163,6 +165,7 @@
 @section('js')
     <script>
         let table;
+        var tahun_action = "{{ Gate::check('tahun.update') ? 1 : 0 }}";
 
         $(function() {
             table = $('#tahunajaran').DataTable({
@@ -214,7 +217,8 @@
                         name: 'action',
                         className: 'text-center',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        visible: parseInt(tahun_action)
                     },
                 ]
             });

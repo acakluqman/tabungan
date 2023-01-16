@@ -48,7 +48,9 @@
                                     <th>Tahun Ajaran</th>
                                     <th>Nama Kelas</th>
                                     <th>Jumlah Siswa</th>
-                                    <th style="width: 10%"></th>
+                                    @can(['kelas.update', 'kelas.destroy'])
+                                        <th style="width: 10%"></th>
+                                    @endcan
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -153,6 +155,7 @@
 @section('js')
     <script>
         let table;
+        var kelas_action = "{{ Gate::check('kelas.update') || Gate::check('kelas.destroy') ? 1 : 0 }}";
 
         $(function() {
             table = $('#kelas').DataTable({
@@ -209,7 +212,8 @@
                         name: 'action',
                         className: 'text-center',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        visible: parseInt(kelas_action)
                     },
                 ]
             });

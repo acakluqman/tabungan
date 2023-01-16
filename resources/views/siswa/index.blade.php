@@ -27,7 +27,9 @@
                             <th>Nama</th>
                             <th style="width: 5%;">LP</th>
                             <th>Alamat</th>
-                            <th style="width: 10%;"></th>
+                            @can(['siswa.update', 'siswa.destroy'])
+                                <th style="width: 10%;"></th>
+                            @endcan
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -40,6 +42,7 @@
 @section('js')
     <script>
         let table;
+        var siswa_action = "{{ Gate::check('siswa.update') || Gate::check('siswa.destroy') ? 1 : 0 }}";
 
         $(function() {
             table = $('#siswa').DataTable({
@@ -84,7 +87,8 @@
                         data: 'action',
                         name: 'action',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        visible: parseInt(siswa_action)
                     },
                 ]
             });

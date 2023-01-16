@@ -9,7 +9,7 @@
 @section('content')
     <section class="content">
         <div class="card">
-            @can('transaksi.create')
+            @can('tabungan.create')
                 <div class="card-header">
                     <h3 class="card-title">
                         <a href="{{ route('tabungan.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Transaksi Baru</a>
