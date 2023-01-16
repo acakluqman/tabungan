@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
         Route::delete('/delete', [TabunganController::class, 'destroy'])->name('tabungan.destroy');
 
         Route::post('/saldo', [TabunganController::class, 'saldo'])->name('tabungan.saldo');
+        Route::get('/siswa', [TabunganController::class, 'tabunganSiswa'])->name('tabungan.siswa');
     });
 
     /**
@@ -73,6 +74,8 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
         Route::get('/{tagihan}/edit', [TagihanController::class, 'edit'])->name('tagihan.edit');
         Route::patch('/{tagihan}/update', [TagihanController::class, 'update'])->name('tagihan.update');
         Route::delete('/{tagihan}/delete', [TagihanController::class, 'destroy'])->name('tagihan.destroy');
+
+        Route::get('/siswa', [TagihanController::class, 'tagihanSiswa'])->name('tagihan.siswa');
     });
 
     /**
@@ -132,7 +135,12 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
         Route::delete('/delete', [UsersController::class, 'destroy'])->name('users.destroy');
     });
 
-    Route::resource('transaksi', TransaksiController::class)->names('transaksi');
+    Route::group(['prefix' => 'transaksi'], function () {
+        Route::get('/', [TransaksiController::class, 'index'])->name('transaksi.index');
+
+        Route::get('/siswa', [TransaksiController::class, 'transaksiSiswa'])->name('transaksi.siswa');
+    });
+
     Route::resource('roles', RolesController::class);
     Route::resource('permissions', PermissionsController::class);
 });

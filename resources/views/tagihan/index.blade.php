@@ -28,18 +28,14 @@
                                     @foreach ($tahun as $th)
                                         <option value="{{ $th->thn_ajaran }}">
                                             {{ 'TA ' . $th->thn_ajaran . '/' . ($th->thn_ajaran + 1) }}
+                                            {{ $th->is_aktif ? ' - Aktif' : '' }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label for="id_jenis_tagihan" class="control-label">Jenis Tagihan</label>
-                                <select name="id_jenis_tagihan" id="id_jenis_tagihan" class="form-control">
-                                    <option value="">Semua Jenis Tagihan</option>
-                                    @foreach ($jenis as $jns)
-                                        <option value="{{ $jns->id_jenis_tagihan }}">{{ $jns->nama }}</option>
-                                    @endforeach
-                                </select>
+                                <select name="id_jenis_tagihan" id="id_jenis_tagihan" class="form-control"></select>
                             </div>
                             <div class="col-md-2">
                                 <label for="status" class="control-label">Status</label>
@@ -94,6 +90,7 @@
 @section('js')
     <script>
         let table;
+        var thn_ajaran = $('#thn_ajaran').val();
 
         $(function() {
             table = $('#tagihan').DataTable({
@@ -113,7 +110,7 @@
                     sSearch: '',
                     lengthMenu: '_MENU_',
                     zeroRecords: 'Tidak ada data yang dapat ditampilkan',
-                    info: 'Halaman _PAGE_ dari _PAGES_' ,
+                    info: 'Halaman _PAGE_ dari _PAGES_',
                     infoFiltered: '(difilter dari _MAX_ data)'
                 },
                 columns: [{
@@ -180,6 +177,43 @@
             $('#thn_ajaran, #id_jenis_tagihan, #status').on('change', function() {
                 $('#tagihan').DataTable().ajax.reload();
             })
+
+            getJenisTagihan(thn_ajaran)
         })
+
+        $('#thn_ajaran').on('change', function() {
+            getJenisTagihan($(this).val())
+        })
+
+        function getJenisTagihan(thn_ajaran) {
+            $.ajax({
+                url: "{{ route('tagihan.create') }}",
+                method: 'get',
+                dataType: 'json',
+                data: {
+                    thn_ajaran: thn_ajaran,
+                    data: 'jenis_tagihan',
+                    _token: "{{ csrf_token() }}",
+                    _method: 'get',
+                },
+                success: function(data) {
+                    if (data) {
+                        var html = '';
+                        html += '<option value="">Semua Jenis Tagihan</option>';
+
+                        $.each(data, function(key, jenis) {
+                            html += '<option value="' + jenis.id_jenis_tagihan + '" data-periode="' +
+                                jenis.periode + '">' + jenis.nama + '</option>';
+
+                        });
+
+                        $('#id_jenis_tagihan').empty();
+                        $('#id_jenis_tagihan').html(html);
+                    } else {
+                        $('#id_jenis_tagihan').empty();
+                    }
+                }
+            });
+        }
     </script>
 @stop

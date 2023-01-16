@@ -167,4 +167,27 @@ class TabunganController extends Controller
             return response()->json(['saldo' => $saldo]);
         }
     }
+
+    public function tabunganSiswa(Request $request)
+    {
+        $user = Auth::user();
+        $siswa = Siswa::where('id_user', $user->id_user)->first();
+
+        if ($request->ajax()) {
+            $data = Tabungan::select('tabungan.*', DB::raw('users.nama as petugas'))
+                ->where('tabungan.id_siswa', $siswa->id_siswa)
+                ->leftJoin('users', 'users.id_user', 'tabungan.id_petugas')
+                ->orderBy('tabungan.id_tabungan', 'desc')
+                ->get();
+
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('tgl_tx', function ($row) {
+                    return Carbon::parse($row->tgl_transaksi)->isoFormat('D MMM Y HH:mm:ss');
+                })
+                ->make(true);
+        }
+
+        return view('tabungan.siswa', compact('siswa'));
+    }
 }

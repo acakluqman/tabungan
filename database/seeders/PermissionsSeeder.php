@@ -38,12 +38,9 @@ class PermissionsSeeder extends Seeder
 
         $siswa->syncPermissions([
             'home',
-            'tabungan.index',
-            'tabungan.show',
-            'tagihan.index',
-            'tagihan.show',
-            'transaksi.index',
-            'transaksi.show',
+            'tabungan.siswa',
+            'tagihan.siswa',
+            'transaksi.siswa',
         ]);
     }
 }

@@ -378,6 +378,28 @@ return [
             'can'  => 'users.index',
             'active' => ['users*']
         ],
+        // Role Siswa
+        [
+            'text' => 'TABUNGAN',
+            'url'  => 'tabungan/siswa',
+            'icon' => 'fas fa-fw fa-wallet',
+            'can'  => 'tabungan.siswa',
+            'active' => ['tabungan*']
+        ],
+        [
+            'text' => 'TAGIHAN SISWA',
+            'url'  => 'tagihan/siswa',
+            'icon' => 'fas fa-fw fa-money-bill',
+            'can'  => 'tagihan.siswa',
+            'active' => ['tagihan*']
+        ],
+        [
+            'text' => 'RIWAYAT TRANSAKSI',
+            'url'  => 'transaksi/siswa',
+            'icon' => 'fas fa-fw fa-cash-register',
+            'can'  => 'transaksi.siswa',
+            'active' => ['transaksi*']
+        ],
     ],
 
     /*

@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use DataTables;
+use Carbon\Carbon;
 use App\Models\Siswa;
 use App\Models\Transaksi;
 use Nette\Utils\DateTime;
+use App\Models\JenisTagihan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StoreTransaksiRequest;
-use App\Models\JenisTagihan;
 use Illuminate\Contracts\Support\Renderable;
 
 class TransaksiController extends Controller
@@ -108,5 +110,29 @@ class TransaksiController extends Controller
     public function destroy(Transaksi $transaksi)
     {
         //
+    }
+
+    public function transaksiSiswa(Request $request)
+    {
+        $user = Auth::user();
+        $siswa = Siswa::where('id_user', $user->id_user)->first();
+
+        if ($request->ajax()) {
+            $data = Transaksi::select('transaksi.*', 'tagihan.*', DB::raw('jenis_tagihan.nama as nama_tagihan'), 'jenis_tagihan.jml_tagihan', DB::raw('users.nama as nama_petugas'))
+                ->leftJoin('tagihan', 'tagihan.id_tagihan', 'transaksi.id_tagihan')
+                ->leftJoin('jenis_tagihan', 'jenis_tagihan.id_jenis_tagihan', 'tagihan.id_jenis_tagihan')
+                ->leftJoin('users', 'users.id_user', 'transaksi.id_petugas')
+                ->where('tagihan.id_siswa', $siswa->id_siswa)
+                ->orderBy('transaksi.created_at', 'desc')
+                ->get();
+
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('tgl_tx', function ($row) {
+                    return Carbon::parse($row->tgl_transaksi)->isoFormat('D MMM Y HH:mm:ss');
+                })
+                ->make(true);
+        }
+        return view('transaksi.siswa');
     }
 }

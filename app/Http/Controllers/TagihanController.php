@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use Throwable;
 use DataTables;
 use Carbon\Carbon;
+use App\Models\Siswa;
 use App\Models\Tahun;
 use App\Models\Tagihan;
 use Carbon\CarbonPeriod;
 use App\Models\KelasSiswa;
 use App\Models\JenisTagihan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use Illuminate\Contracts\Support\Renderable;
 use InvalidArgumentException;
 use Psy\Readline\Hoa\Exception;
-use Throwable;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Support\Renderable;
 
 class TagihanController extends Controller
 {
@@ -248,8 +250,33 @@ class TagihanController extends Controller
         //
     }
 
-    public function ajax(Request $request)
+    public function tagihanSiswa(Request $request)
     {
-        return;
+        $user = Auth::user();
+        $siswa = Siswa::where('id_user', $user->id_user)->first();
+        $tahun = Tahun::where('is_aktif', 1)->first();
+        $kelas = KelasSiswa::select('kelas.nama')
+            ->leftJoin('kelas', 'kelas.id_kelas', 'kelas_siswa.id_kelas')
+            ->where('kelas_siswa.id_siswa', $siswa->id_siswa)
+            ->where('kelas_siswa.thn_ajaran', $tahun->thn_ajaran)
+            ->first();
+
+        if ($request->ajax()) {
+            $data = Tagihan::select('tagihan.*', 'jenis_tagihan.nama', 'jenis_tagihan.jml_tagihan')
+                ->leftJoin('jenis_tagihan', 'jenis_tagihan.id_jenis_tagihan', 'tagihan.id_jenis_tagihan')
+                ->where('tagihan.id_siswa', $siswa->id_siswa)
+                ->whereDate('tagihan.tgl_tagihan', '<=', Carbon::today())
+                ->orderBy('tagihan.tgl_tagihan', 'desc')
+                ->get();
+
+            return Datatables::of($data)
+                ->addIndexColumn()
+                ->addColumn('tgl_jatuh_tempo_parse', function ($row) {
+                    return Carbon::parse($row->tgl_jatuh_tempo)->isoFormat('D MMMM Y');
+                })
+                ->make(true);
+        }
+
+        return view('tagihan.siswa', compact('user', 'siswa', 'tahun', 'kelas'));
     }
 }
