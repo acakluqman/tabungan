@@ -25,7 +25,6 @@
             </div>
 
             <div class="col-lg-3 col-6">
-
                 <div class="small-box bg-danger">
                     <div class="inner">
                         <h3>Rp. {{ $total_tagihan }}</h3>
@@ -51,6 +50,39 @@
                     </div>
                     <a href="{{ route('transaksi.siswa') }}" class="small-box-footer">
                         Riwayat Transaksi <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        @endif
+
+        {{-- role petugas atau admin --}}
+        @if (Auth::user()->hasRole('admin') || Auth::user()->hasRole('petugas'))
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>Rp. {{ $saldo_tabungan }}</h3>
+                        <p>Total Saldo Tabungan</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-fw fa-wallet"></i>
+                    </div>
+                    <a href="{{ route('tabungan.index') }}" class="small-box-footer">
+                        Tabungan Siswa <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>Rp. {{ $total_tagihan }}</h3>
+                        <p>Total Tagihan ({{ $jml_tagihan }})</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-fw fa-money-bill"></i>
+                    </div>
+                    <a href="{{ route('tagihan.index') }}" class="small-box-footer">
+                        Tagihan Siswa <i class="fas fa-arrow-circle-right"></i>
                     </a>
                 </div>
             </div>

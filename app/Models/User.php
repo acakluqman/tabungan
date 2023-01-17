@@ -47,6 +47,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function isAdmin()
+    {
+        return $this->hasRole('admin');
+    }
+
+    public function isPetugas()
+    {
+        return $this->hasRole('petugas');
+    }
+
     public function isSiswa()
     {
         return $this->hasRole('siswa');
