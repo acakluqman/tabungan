@@ -27,8 +27,6 @@ class StoreTransaksiRequest extends FormRequest
             'id_tagihan' => 'required',
             'total_tagihan' => 'required',
             'total_bayar' => 'required',
-            'tgl_transaksi' => 'required',
-            'id_petugas' => 'required',
         ];
     }
 }

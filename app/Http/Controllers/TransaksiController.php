@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use DataTables;
 use Carbon\Carbon;
 use App\Models\Siswa;
+use App\Models\Tagihan;
+use App\Models\Tabungan;
 use App\Models\Transaksi;
-use Nette\Utils\DateTime;
-use App\Models\JenisTagihan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\StoreTransaksiRequest;
 use Illuminate\Contracts\Support\Renderable;
 
 class TransaksiController extends Controller
@@ -38,33 +38,119 @@ class TransaksiController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function create()
+    public function create(Request $request)
     {
         $siswa = Siswa::orderBy('nama', 'asc')->get();
+
+        if ($request->ajax()) {
+            if ($request->data == 'saldo_tabungan') {
+                $debit = Tabungan::where('id_siswa', $request->id_siswa)->where('tipe', 'debit')->sum('nominal');
+                $kredit = Tabungan::where('id_siswa', $request->id_siswa)->where('tipe', 'kredit')->sum('nominal');
+
+                $saldo = (intval($debit) - intval($kredit));
+
+                return response()->json(['saldo' => $saldo]);
+            }
+            if ($request->data == 'tagihan') {
+                $arr_tagihan = [];
+                $tagihan = Tagihan::select('tagihan.*', 'jenis_tagihan.nama', 'jenis_tagihan.jml_tagihan')
+                    ->leftJoin('jenis_tagihan', 'jenis_tagihan.id_jenis_tagihan', 'tagihan.id_jenis_tagihan')
+                    ->where('tagihan.id_siswa', $request->id_siswa)
+                    ->whereDate('tagihan.tgl_tagihan', '<=', Carbon::today())
+                    ->where('tagihan.id_status_tagihan', 1)
+                    ->orderBy('tagihan.tgl_tagihan', 'desc')
+                    ->get();
+
+                $total_tagihan = 0;
+                foreach ($tagihan as $row) {
+                    $total_tagihan += $row->jml_tagihan;
+                    $arr_tagihan[] = [
+                        'id_tagihan' => $row->id_tagihan,
+                        'id_jenis_tagihan' => $row->id_jenis_tagihan,
+                        'id_siswa' => $row->id_siswa,
+                        'tgl_tagihan' => Carbon::parse($row->tgl_tagihan)->isoFormat('D MMMM Y'),
+                        'tgl_jatuh_tempo' => Carbon::parse($row->tgl_jatuh_tempo)->isoFormat('D MMMM Y'),
+                        'id_status_tagihan' => $row->id_status_tagihan,
+                        'nama' => $row->nama,
+                        'jml_tagihan' => $row->jml_tagihan,
+                    ];
+                }
+
+                return response()->json(['total_tagihan' => $total_tagihan, 'tagihan' => $arr_tagihan]);
+            }
+        }
 
         return view('transaksi.create', compact('siswa'));
     }
 
     /**
+     *
      * Store a newly created resource in storage.
      *
-     * @param  StoreTransaksiRequest  $request
-     * @return RedirectResponse
      */
-    public function store(StoreTransaksiRequest $request)
+    public function store(Request $request)
     {
-        $tagihan = JenisTagihan::find($request->id_tagihan);
+        DB::beginTransaction();
+        try {
+            foreach ($request->id_tagihan as $id_tagihan) {
+                if ($request->ambil_tabungan) {
+                    $debit = Tabungan::where('id_siswa', $request->id_siswa)->where('tipe', 'debit')->sum('nominal');
+                    $kredit = Tabungan::where('id_siswa', $request->id_siswa)->where('tipe', 'kredit')->sum('nominal');
+                    $saldo = (intval($debit) - intval($kredit));
 
-        Transaksi::creat([
-            'id_tagihan' => $tagihan->id_tagihan,
-            'total_tagihan' => $tagihan->jml_tagihan,
-            'total_bayar' => $request->total_bayar,
-            'tgl_transaksi' => new DateTime(),
-            'id_petugas' => Auth::user()->id_user,
-        ]);
-        return redirect()->back()->with('success', 'Berhasil menyimpan transaksi!');
+                    $tagihan = Tagihan::select('tagihan.id_tagihan', 'jenis_tagihan.nama', 'jenis_tagihan.jml_tagihan')
+                        ->leftJoin('jenis_tagihan', 'jenis_tagihan.id_jenis_tagihan', 'tagihan.id_jenis_tagihan')
+                        ->where('tagihan.id_tagihan', $id_tagihan)
+                        ->first();
+
+                    if ($saldo >= $tagihan->jml_tagihan) {
+                        Tabungan::create([
+                            'tipe' => 'kredit',
+                            'id_siswa' => $request->id_siswa,
+                            'nominal' => $tagihan->jml_tagihan,
+                            'keterangan' => 'Kredit untuk pembayaran tagihan siswa ' . $tagihan->nama,
+                            'tgl_transaksi' => new \DateTime(),
+                            'id_petugas' => Auth::user()->id_user
+                        ]);
+
+                        Transaksi::create([
+                            'id_tagihan' => $tagihan->id_tagihan,
+                            'total_tagihan' => $tagihan->jml_tagihan,
+                            'total_bayar' => $tagihan->jml_tagihan,
+                            'tgl_transaksi' => new \DateTime(),
+                            'id_petugas' => Auth::user()->id_user
+                        ]);
+                    } else {
+                        Tabungan::create([
+                            'tipe' => 'kredit',
+                            'id_siswa' => $request->id_siswa,
+                            'nominal' => $saldo,
+                            'keterangan' => 'Kredit untuk pembayaran tagihan siswa ' . $tagihan->nama,
+                            'tgl_transaksi' => new \DateTime(),
+                            'id_petugas' => Auth::user()->id_user
+                        ]);
+
+                        Transaksi::create([
+                            'id_tagihan' => $tagihan->id_tagihan,
+                            'total_tagihan' => $tagihan->jml_tagihan,
+                            'total_bayar' => $tagihan->jml_tagihan,
+                            'tgl_transaksi' => new \DateTime(),
+                            'id_petugas' => Auth::user()->id_user
+                        ]);
+                    }
+                }
+
+                Tagihan::where('id_tagihan', $id_tagihan)
+                    ->update(['id_status_tagihan' => 2, 'updated_at' => new \DateTime()]);
+            }
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Berhasil menyimpan transaksi');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal menyimpan transaksi. Silahkan ulangi kembali! Error: ' . $e->getMessage());
+        }
     }
 
     /**
