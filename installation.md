@@ -4,8 +4,12 @@
 - Extract ke direktori `C:/xampp/htdocs`
 - Buka folder di VSCode
 - Copy `.env.example` ke `.env`
-- Ubah credentials database
+- Ubah credentials database (DB_DATABASE, DB_USERNAME dan DB_PASSWORD)
 - Jalankan command berikut di terminal VSCode
+
+```bash
+composer install
+```
 
 ```bash
 php artisan key:generate
@@ -34,7 +38,3 @@ php artisan optimize:clear
 ```bash
 php artisan serve
 ```
-
-<!-- 
-https://codeanddeploy.com/blog/laravel/laravel-8-user-roles-and-permissions-step-by-step-tutorial#kjNAJj9MlMLUcT2n1u7o2VOaO 
--->
