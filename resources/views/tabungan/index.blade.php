@@ -12,7 +12,12 @@
             @can('tabungan.create')
                 <div class="card-header">
                     <h3 class="card-title">
-                        <a href="{{ route('tabungan.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Transaksi Baru</a>
+                        <a href="{{ route('tabungan.create') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Transaksi Baru
+                        </a>
+                        <button type="button" data-toggle="modal" data-target="#modal-laporan" class="btn btn-danger">
+                            Cetak Laporan
+                        </button>
                     </h3>
                 </div>
             @endcan
@@ -33,6 +38,49 @@
             </div>
         </div>
     </section>
+
+    <div class="modal fade" id="modal-laporan">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cetak Laporan Tabungan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('tabungan.download') }}" id="form" method="post">
+                    @method('post')
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="tahun" class="control-label">Tahun</label>
+                                <select style="width: 100%;" name="tahun" id="tahun" class="form-control">
+                                    @for ($i = date('Y'); $i >= date('Y') - 3; $i--)
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="bulan" class="control-label">Bulan</label>
+                                <select style="width: 100%;" name="bulan" id="bulan" class="form-control">
+                                    @for ($m = 1; $m <= 12; $m++)
+                                        <option value="{{ $m }}">
+                                            {{ \Carbon\Carbon::parse(date('F', mktime(0, 0, 0, $m, 1, date('Y'))))->isoFormat('MMMM') }}
+                                        </option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-danger">Cetak</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('js')

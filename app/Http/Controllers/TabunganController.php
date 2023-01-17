@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use DataTables;
 use Carbon\Carbon;
 use App\Models\Siswa;
@@ -189,5 +190,23 @@ class TabunganController extends Controller
         }
 
         return view('tabungan.siswa', compact('siswa'));
+    }
+
+    public function download(Request $request)
+    {
+        $periode = Carbon::parse($request->tahun . '-' . $request->bulan)->isoFormat('MMMM Y');
+
+        $tabungan = Tabungan::select('siswa.nis', DB::raw('siswa.nama as nama_siswa'), 'tabungan.*', DB::raw('users.nama as nama_petugas'))
+            ->leftJoin('siswa', 'siswa.id_siswa', 'tabungan.id_siswa')
+            ->leftJoin('users', 'users.id_user', 'tabungan.id_petugas')
+            ->whereYear('tabungan.tgl_transaksi', '=', $request->tahun)
+            ->whereMonth('tabungan.tgl_transaksi', '=', $request->bulan)
+            ->orderBy('tabungan.tgl_transaksi', 'desc')
+            ->get();
+
+
+        $pdf = PDF::loadview('tabungan.download', ['tabungan' => $tabungan, 'periode' => $periode])->setPaper('a4', 'landscape');
+
+        return $pdf->stream();
     }
 }

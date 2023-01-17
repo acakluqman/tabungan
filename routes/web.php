@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
 
         Route::post('/saldo', [TabunganController::class, 'saldo'])->name('tabungan.saldo');
         Route::get('/siswa', [TabunganController::class, 'tabunganSiswa'])->name('tabungan.siswa');
+        Route::post('/download', [TabunganController::class, 'download'])->name('tabungan.download');
     });
 
     /**
