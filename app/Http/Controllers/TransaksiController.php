@@ -25,10 +25,25 @@ class TransaksiController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Transaksi::latest()->get();
+            $data = Transaksi::select('siswa.nis', DB::raw('siswa.nama as nama_siswa'), DB::raw('jenis_tagihan.nama as nama_tagihan'), 'transaksi.total_tagihan', 'transaksi.total_bayar', 'transaksi.tgl_transaksi', DB::raw('users.nama as nama_petugas'))
+                ->leftJoin('tagihan', 'tagihan.id_tagihan', 'transaksi.id_tagihan')
+                ->leftJoin('siswa', 'siswa.id_siswa', 'tagihan.id_siswa')
+                ->leftJoin('jenis_tagihan', 'jenis_tagihan.id_jenis_tagihan', 'tagihan.id_jenis_tagihan')
+                ->leftJoin('users', 'users.id_user', 'transaksi.id_petugas')
+                ->orderBy('transaksi.id_transaksi', 'desc')
+                ->get();
 
             return Datatables::of($data)
                 ->addIndexColumn()
+                ->addColumn('tgl_transaksi_parse', function ($row) {
+                    return Carbon::parse($row->tgl_transaksi)->isoFormat('D MMMM Y');
+                })
+                ->addColumn('total_tagihan_parse', function ($row) {
+                    return 'Rp ' . number_format($row->total_tagihan, 0, '.', '.');
+                })
+                ->addColumn('total_bayar_parse', function ($row) {
+                    return 'Rp ' . number_format($row->total_bayar, 0, '.', '.');
+                })
                 ->make(true);
         }
 

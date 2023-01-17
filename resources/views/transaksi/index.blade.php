@@ -25,7 +25,8 @@
                             <th style="width: 5%">No.</th>
                             <th>Nama Siswa</th>
                             <th>Nama Transaksi</th>
-                            <th>Jenis Transaksi</th>
+                            <th>Total Tagihan</th>
+                            <th>Jumlah Dibayar</th>
                             <th>Tanggal Transaksi</th>
                             <th>Petugas</th>
                         </tr>
@@ -35,6 +36,14 @@
             </div>
         </div>
     </section>
+@stop
+
+@section('css')
+    <style>
+        table.dataTable tbody td {
+            vertical-align: middle !important;
+        }
+    </style>
 @stop
 
 @section('js')
@@ -60,43 +69,35 @@
                         name: 'DT_RowIndex',
                         className: 'text-center',
                         render: function(data) {
-                            return '<p class="mg-b-0">' + data + '.</p>';
+                            return data + '.';
                         },
                     },
                     {
-                        data: 'id_transaksi',
-                        name: 'id_transaksi',
-                        // render: function(data, type, row, meta) {
-                        //     return row.thn_ajaran + '/' + (parseInt(row.thn_ajaran) + 1);
-                        // }
+                        data: 'nis',
+                        name: 'nis',
+                        render: function(data, type, row, meta) {
+                            return row.nis + '<br>' + row.nama_siswa;
+                        }
                     },
                     {
-                        data: 'id_transaksi',
-                        name: 'id_transaksi',
-                        // render: function(data, type, row, meta) {
-                        //     return row.thn_ajaran + '/' + (parseInt(row.thn_ajaran) + 1);
-                        // }
+                        data: 'nama_tagihan',
+                        name: 'nama_tagihan',
                     },
                     {
-                        data: 'id_transaksi',
-                        name: 'id_transaksi',
-                        // render: function(data, type, row, meta) {
-                        //     return row.thn_ajaran + '/' + (parseInt(row.thn_ajaran) + 1);
-                        // }
+                        data: 'total_tagihan_parse',
+                        name: 'total_tagihan_parse',
                     },
                     {
-                        data: 'id_transaksi',
-                        name: 'id_transaksi',
-                        // render: function(data, type, row, meta) {
-                        //     return row.thn_ajaran + '/' + (parseInt(row.thn_ajaran) + 1);
-                        // }
+                        data: 'total_bayar_parse',
+                        name: 'total_bayar_parse',
                     },
                     {
-                        data: 'id_transaksi',
-                        name: 'id_transaksi',
-                        // render: function(data, type, row, meta) {
-                        //     return row.thn_ajaran + '/' + (parseInt(row.thn_ajaran) + 1);
-                        // }
+                        data: 'tgl_transaksi_parse',
+                        name: 'tgl_transaksi_parse'
+                    },
+                    {
+                        data: 'nama_petugas',
+                        name: 'nama_petugas'
                     },
                 ]
             });
