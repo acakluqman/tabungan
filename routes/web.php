@@ -145,6 +145,7 @@ Route::group(['middleware' => ['auth', 'permission']], function () {
         Route::delete('/delete', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
 
         Route::get('/siswa', [TransaksiController::class, 'transaksiSiswa'])->name('transaksi.siswa');
+        Route::post('/download', [TransaksiController::class, 'download'])->name('transaksi.download');
     });
 
     Route::resource('roles', RolesController::class);

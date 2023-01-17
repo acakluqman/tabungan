@@ -81,6 +81,7 @@ class PermissionsSeeder extends Seeder
             'transaksi.edit',
             'transaksi.update',
             'transaksi.destroy',
+            'transaksi.download',
         ]);
 
         $petugas->syncPermissions([
@@ -107,6 +108,7 @@ class PermissionsSeeder extends Seeder
             'transaksi.show',
             'transaksi.create',
             'transaksi.store',
+            'transaksi.download',
         ]);
 
         $siswa->syncPermissions([

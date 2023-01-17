@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
+use DateTime;
 use Exception;
 use DataTables;
 use Carbon\Carbon;
@@ -235,5 +237,25 @@ class TransaksiController extends Controller
                 ->make(true);
         }
         return view('transaksi.siswa');
+    }
+
+    public function download(Request $request)
+    {
+        $periode = Carbon::parse($request->tahun.'-'.$request->bulan)->isoFormat('MMMM Y');
+
+        $transaksi = Transaksi::select('siswa.nis', DB::raw('siswa.nama as nama_siswa'), 'jenis_tagihan.nama as nama_tagihan', 'transaksi.*', DB::raw('users.nama as nama_petugas'))
+            ->leftJoin('tagihan', 'tagihan.id_tagihan', 'transaksi.id_tagihan')
+            ->leftJoin('jenis_tagihan', 'jenis_tagihan.id_jenis_tagihan', 'tagihan.id_jenis_tagihan')
+            ->leftJoin('siswa', 'siswa.id_siswa', 'tagihan.id_siswa')
+            ->leftJoin('users', 'users.id_user', 'transaksi.id_petugas')
+            ->whereYear('transaksi.tgl_transaksi', '=', $request->tahun)
+            ->whereMonth('transaksi.tgl_transaksi', '=', $request->bulan)
+            ->orderBy('transaksi.id_transaksi', 'desc')
+            ->get();
+
+
+        $pdf = PDF::loadview('transaksi.download', ['transaksi' => $transaksi, 'periode' => $periode])->setPaper('a4', 'landscape');
+
+        return $pdf->stream();
     }
 }
