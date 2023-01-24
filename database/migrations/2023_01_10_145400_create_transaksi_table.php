@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('total_bayar');
             $table->dateTime('tgl_transaksi');
             $table->foreignIdFor(User::class, 'id_petugas')->nullable();
+            $table->text('keterangan')->nullable();
             $table->timestamps();
 
             $table->foreign('id_tagihan')->references('id_tagihan')->on('tagihan')->onUpdate('cascade')->onDelete('restrict');

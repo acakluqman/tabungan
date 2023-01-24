@@ -41,6 +41,16 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body table-responsive">
+                        @if (count($errors) > 0)
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                         <table class="table table-striped table-hover" id="kelas">
                             <thead>
                                 <tr>

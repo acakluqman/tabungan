@@ -72,7 +72,15 @@
                         <label for="kurang_bayar" class="col-md-2 col-form-label">Kurang Bayar</label>
                         <div class="col-md-5">
                             <input type="number" class="form-control" name="kurang_bayar" id="kurang_bayar"
-                                placeholder="Masukkan Nominal" inputmode="numeric" disabled>
+                                placeholder="Masukkan Nominal" inputmode="numeric" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="cash" class="col-md-2 col-form-label">Cash</label>
+                        <div class="col-md-5">
+                            <input type="number" class="form-control" name="cash" id="cash"
+                                placeholder="Masukkan Nominal" inputmode="numeric" readonly>
                         </div>
                     </div>
 
@@ -172,12 +180,18 @@
                 $.each(selected_tagihan, function(key, tagihan) {
                     var tag = tagihan.getAttribute('data-id');
 
-                    total_tagihan = parseInt(total_tagihan) + parseInt(
-                        tag);
+                    total_tagihan = parseInt(total_tagihan) + parseInt(tag);
                 })
+
+                document.getElementById('cash').readonly = false;
+                document.getElementById('cash').value = total_tagihan;
 
                 ambil_tabungan.addEventListener('change', (event) => {
                     if (event.currentTarget.checked) {
+                        console.log('checked')
+                        document.getElementById('cash').value = '';
+                        document.getElementById('cash').readonly = true;
+
                         var saldo_tabungan_tersisa = $('#saldo_tabungan_int').val();
                         if (total_tagihan < saldo_tabungan_tersisa) {
                             var total_tagihan_harus_bayar = total_tagihan;
@@ -188,9 +202,18 @@
                             var kurang_bayar = total_tagihan - saldo_tabungan_tersisa;
                             $('#kurang_bayar').val(kurang_bayar);
                             document.getElementById('kurang_bayar').disabled = false;
+                            document.getElementById('kurang_bayar').readonly = true;
                         }
 
                         $('#bayar').val(total_tagihan_harus_bayar);
+                    } else {
+                        console.log('not checked')
+                        document.getElementById('bayar').value = '';
+                        document.getElementById('bayar').disabled = true;
+                        document.getElementById('kurang_bayar').value = '';
+                        document.getElementById('kurang_bayar').disabled = true;
+                        document.getElementById('cash').value = total_tagihan;
+                        document.getElementById('cash').readonly = false;
                     }
                 })
 

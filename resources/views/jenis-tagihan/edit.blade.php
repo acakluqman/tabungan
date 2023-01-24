@@ -10,10 +10,20 @@
     <section class="content">
         <div class="card">
             <div class="card-body">
+                @if (count($errors) > 0)
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('jenis-tagihan.update', ['id' => $jenistagihan->id_jenis_tagihan]) }}" method="post">
                     @method('patch')
                     @csrf
-
+                    <input type="hidden" name="id" id="id" value="{{ $jenistagihan->id_jenis_tagihan }}" readonly>
                     <div class="form-group row">
                         <label for="thn_ajaran" class="col-sm-2 col-form-label">Tahun Ajaran</label>
                         <div class="col-sm-2">
@@ -42,6 +52,22 @@
                             <input type="number" class="form-control" name="jml_tagihan" id="jml_tagihan"
                                 placeholder="Jumlah Tagihan" value="{{ (float) $jenistagihan->jml_tagihan }}" required
                                 inputmode="number">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="periode" class="col-sm-2 col-form-label">Periode Tagihan</label>
+                        <div class="col-sm-5">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="periode" id="bulanan" value="bulanan"
+                                    {{ $jenistagihan->periode == 'bulanan' ? 'checked' : '' }}>
+                                <label class="form-check-label">Bulanan</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="periode" id="sekali_bayar"
+                                    value="sekali_bayar" {{ $jenistagihan->periode == 'sekali_bayar' ? 'checked' : '' }}>
+                                <label class="form-check-label">Sekali Bayar</label>
+                            </div>
                         </div>
                     </div>
 

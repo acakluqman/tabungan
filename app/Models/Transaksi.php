@@ -28,5 +28,5 @@ class Transaksi extends Model
      *
      * @var array
      */
-    protected $fillable = ['id_tagihan', 'total_tagihan', 'total_bayar', 'tgl_transaksi', 'id_petugas'];
+    protected $fillable = ['id_tagihan', 'total_tagihan', 'total_bayar', 'tgl_transaksi', 'id_petugas', 'keterangan'];
 }

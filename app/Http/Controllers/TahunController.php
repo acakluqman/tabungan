@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StoreTahunRequest;
+use App\Http\Requests\UpdateTahunRequest;
 use Illuminate\Contracts\Support\Renderable;
 
 class TahunController extends Controller
@@ -29,6 +30,13 @@ class TahunController extends Controller
                 ->addColumn('tgl_efektif', function ($row) {
                     return Carbon::parse($row->tgl_mulai)->isoFormat('D MMMM Y') . ' s.d. ' . Carbon::parse($row->tgl_selesai)->isoFormat('D MMMM Y');
                 })
+                ->addColumn('status_tx', function ($row) {
+                    if ((Carbon::parse('now')->equalTo($row->tgl_mulai) || Carbon::parse('now')->greaterThan($row->tgl_mulai)) && (Carbon::parse('now')->equalTo($row->tgl_selesai) || Carbon::parse('now')->lessThan($row->tgl_selesai))) {
+                        return 'Aktif';
+                    } else {
+                        return 'Tidak Aktif';
+                    }
+                })
                 ->addColumn('action', function ($row) {
                     return '<a href="javascript:void(0)" id="edit" data-id="' . $row->thn_ajaran . '" class="btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" id="delete" data-id="' . $row->thn_ajaran . '" class="btn btn-danger btn-sm">Delete</a>';
                 })
@@ -36,6 +44,7 @@ class TahunController extends Controller
                 ->make(true);
         }
 
+        $this->_updateStatus();
         return view('tahun.index');
     }
 
@@ -66,17 +75,13 @@ class TahunController extends Controller
             Tahun::create($request->validated());
 
             DB::commit();
+
+            return redirect()->route('tahun.index')->with('success', 'Berhasil simpan tahun ajaran!');
         } catch (\Throwable $th) {
             DB::rollback();
 
-            return redirect()
-                ->back()
-                ->with('error', 'Gagal menyimpan tahun ajaran! Error: ' . $th->getMessage());
+            return redirect()->back()->with('error', 'Gagal menyimpan tahun ajaran! Error: ' . $th->getMessage());
         }
-
-        return redirect()
-            ->route('tahun.index')
-            ->with('success', 'Berhasi simpan tahun ajaran!');
     }
 
     /**
@@ -110,19 +115,15 @@ class TahunController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  UpdateTahunRequest  $request
      *
      * @return RedirectResponse
      */
-    public function update(Request $request)
+    public function update(UpdateTahunRequest $request)
     {
         DB::beginTransaction();
 
         try {
-            if ($request->is_aktif) {
-                Tahun::where('is_aktif', 1)->first()->update(['is_aktif' => 0]);
-            }
-
             Tahun::where('thn_ajaran', $request->thn_ajaran)
                 ->update([
                     'tgl_mulai' => $request->tgl_mulai,
@@ -131,15 +132,13 @@ class TahunController extends Controller
                 ]);
 
             DB::commit();
+
+            return redirect()->back()->with('success', 'Berhasil memperbarui data tahun ajaran!');
         } catch (\Throwable $th) {
             DB::rollback();
 
-            return redirect()
-                ->back()
-                ->with('error', 'Gagal memperbarui data tahun ajaran! Error: ' . $th->getMessage());
+            return redirect()->back()->with('error', 'Gagal memperbarui data tahun ajaran! Error: ' . $th->getMessage());
         }
-
-        return redirect()->back()->with('success', 'Berhasil memperbarui data tahun ajaran!');
     }
 
     /**
@@ -155,5 +154,26 @@ class TahunController extends Controller
 
         return redirect()->route('tahun.index')
             ->with('success', 'Berhasil menghapus data tahun ajaran!');
+    }
+
+    private function _updateStatus()
+    {
+        DB::beginTransaction();
+        try {
+            $tahun = Tahun::select('thn_ajaran')
+                ->whereDate('tgl_mulai', '>=', date('Y-m-d'))
+                ->whereDate('tgl_selesai', '<=', date('Y-m-d'))
+                ->get();
+
+            if ($tahun) {
+                Tahun::where('is_aktif', 1)->update(['is_aktif' => 0]);
+                Tahun::where('thn_ajaran', $tahun->thn_ajaran)
+                    ->update(['is_aktif', 1]);
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+        }
     }
 }

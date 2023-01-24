@@ -86,6 +86,42 @@
                     </a>
                 </div>
             </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-primary">
+                    <div class="inner">
+                        <h3>{{ $jml_siswa }}</h3>
+                        <p>Jumlah Siswa</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-fw fa-users"></i>
+                    </div>
+                    <a href="{{ route('siswa.index') }}" class="small-box-footer">
+                        Data Siswa <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ $jml_pengguna }}</h3>
+                        <p>Jumlah Pengguna</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-fw fa-users"></i>
+                    </div>
+                    @can('users.index')
+                        <a href="{{ route('users.index') }}" class="small-box-footer">
+                            Data Pengguna <i class="fas fa-arrow-circle-right"></i>
+                        </a>
+                    @else
+                        <a href="#" class="small-box-footer">
+                            &nbsp;
+                        </a>
+                    @endcan
+                </div>
+            </div>
         @endif
     </div>
 @stop

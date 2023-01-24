@@ -7,6 +7,7 @@ use App\Models\Siswa;
 use App\Models\Tagihan;
 use App\Models\Tabungan;
 use App\Models\Transaksi;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -28,7 +29,7 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $saldo_tabungan = $jml_tagihan = $total_tagihan = $jml_transaksi = 0;
+        $saldo_tabungan = $jml_tagihan = $total_tagihan = $jml_transaksi = $jml_siswa = $jml_pengguna = 0;
 
         if ($user->isSiswa()) {
             $siswa = Siswa::where('id_user', $user->id_user)->first();
@@ -65,8 +66,11 @@ class HomeController extends Controller
                 ->whereDate('tagihan.tgl_tagihan', '<=', Carbon::today())
                 ->sum('jenis_tagihan.jml_tagihan');
             $total_tagihan = number_format($tagihan, 0, '.', '.');
+
+            $jml_siswa = Siswa::all()->count();
+            $jml_pengguna = User::all()->count();
         }
 
-        return view('home', compact('saldo_tabungan', 'jml_tagihan', 'total_tagihan', 'jml_transaksi'));
+        return view('home', compact('saldo_tabungan', 'jml_tagihan', 'total_tagihan', 'jml_transaksi', 'jml_siswa', 'jml_pengguna'));
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreJenisTagihanRequest;
+use App\Http\Requests\UpdateJenisTagihanRequest;
 use DataTables;
 use App\Models\Tahun;
 use App\Models\JenisTagihan;
@@ -52,10 +54,10 @@ class JenisTagihanController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  StoreJenisTagihanRequest  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreJenisTagihanRequest $request)
     {
         JenisTagihan::create([
             'thn_ajaran' => $request->thn_ajaran,
@@ -97,11 +99,11 @@ class JenisTagihanController extends Controller
      * Update the specified resource in storage.
      *
      * @param  int  $id
-     * @param  \Illuminate\Http\Request  $request
+     * @param  UpdateJenisTagihanRequest  $request
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update($id, Request $request)
+    public function update($id, UpdateJenisTagihanRequest $request)
     {
         $jenis = JenisTagihan::findOrFail($id);
 

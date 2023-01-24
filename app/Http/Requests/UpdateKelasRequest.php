@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateJenisTagihanRequest extends FormRequest
+class UpdateKelasRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,16 +26,14 @@ class UpdateJenisTagihanRequest extends FormRequest
     public function rules(Request $request)
     {
         return [
-            'thn_ajaran' => 'required',
-            'jml_tagihan' => 'required|numeric',
-            'periode' => 'required',
+            'thn' => 'required',
             'nama' => [
                 'required',
-                Rule::unique('jenis_tagihan')->where(function ($query) use ($request) {
+                Rule::unique('kelas')->where(function ($query) use ($request) {
                     return $query
-                        ->where('thn_ajaran', $request->thn_ajaran)
+                        ->where('thn_ajaran', $request->thn)
                         ->where('nama', $request->nama);
-                })->ignore($request->id, 'id_jenis_tagihan')
+                })->ignore($request->id, 'id_kelas'),
             ]
         ];
     }
@@ -48,12 +46,22 @@ class UpdateJenisTagihanRequest extends FormRequest
     public function messages()
     {
         return [
-            'thn_ajaran.required' => 'Tahun ajaran harus diisi!',
-            'nama.required' => 'Nama jenis tagihan harus diisi!',
-            'nama.unique' => 'Nama jenis tagihan sudah digunakan!',
-            'jml_tagihan.required' => 'Jumlah tagihan harus diisi!',
-            'jml_tagihan.numeric' => 'Jumlah tagihan harus diisi dengan angka!',
-            'periode.required' => 'Periode tagihan harus diisi!',
+            'thn.required' => 'Tahun ajaran harus diisi!',
+            'nama.required' => 'Nama kelas harus diisi!',
+            'nama.unique' => 'Nama kelas sudah digunakan!',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'thn' => 'Tahun ajaran',
+            'nama' => 'Nama kelas'
         ];
     }
 }

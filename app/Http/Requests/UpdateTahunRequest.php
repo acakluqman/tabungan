@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTahunRequest extends FormRequest
+class UpdateTahunRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,13 +23,19 @@ class StoreTahunRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(Request $request)
     {
         return [
-            'thn_ajaran' => 'required|unique:tahun_ajaran,thn_ajaran',
             'tgl_mulai' => 'required|date',
             'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
-            'is_aktif' => 'required'
+            'is_aktif' => 'required',
+            'thn_ajaran' => [
+                'required',
+                Rule::unique('tahun_ajaran')->where(function ($query) use ($request) {
+                    return $query
+                        ->where('thn_ajaran', $request->thn_ajaran);
+                })->ignore($request->thn_ajaran, 'thn_ajaran'),
+            ]
         ];
     }
 

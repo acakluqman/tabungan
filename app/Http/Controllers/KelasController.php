@@ -8,9 +8,12 @@ use App\Models\Tahun;
 use App\Models\KelasSiswa;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\StoreKelasRequest;
+use App\Http\Requests\UpdateKelasRequest;
 use Illuminate\Contracts\Support\Renderable;
 
 class KelasController extends Controller
@@ -52,14 +55,13 @@ class KelasController extends Controller
     {
     }
 
-
     /**
      * Show the form for creating a new resource.
      *
-     * @param Request $request
+     * @param StoreKelasRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreKelasRequest $request)
     {
         try {
             Kelas::create([
@@ -104,12 +106,11 @@ class KelasController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * @param int $id
-     * @param  \Illuminate\Http\Request  $request
+     * @param  UpdateKelasRequest  $request
      *
      * @return RedirectResponse
      */
-    public function update(Request $request)
+    public function update(UpdateKelasRequest $request)
     {
         $kelas = Kelas::findOrFail($request->id);
 

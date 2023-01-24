@@ -111,21 +111,21 @@ class TransaksiController extends Controller
         DB::beginTransaction();
         try {
             foreach ($request->id_tagihan as $id_tagihan) {
-                $debit = Tabungan::where('id_siswa', $request->id_siswa)->where('tipe', 'debit')->sum('nominal');
-                $kredit = Tabungan::where('id_siswa', $request->id_siswa)->where('tipe', 'kredit')->sum('nominal');
-                $saldo = (intval($debit) - intval($kredit));
-
-                $tagihan = Tagihan::select('tagihan.id_tagihan', 'jenis_tagihan.nama', 'jenis_tagihan.jml_tagihan')
-                    ->leftJoin('jenis_tagihan', 'jenis_tagihan.id_jenis_tagihan', 'tagihan.id_jenis_tagihan')
-                    ->where('tagihan.id_tagihan', $id_tagihan)
-                    ->first();
-
                 if ($request->ambil_tabungan) {
-                    if ($saldo >= $tagihan->jml_tagihan || $tagihan->jml_tagihan == ($saldo + $request->kurang_bayar)) {
+                    $debit = Tabungan::where('id_siswa', $request->id_siswa)->where('tipe', 'debit')->sum('nominal');
+                    $kredit = Tabungan::where('id_siswa', $request->id_siswa)->where('tipe', 'kredit')->sum('nominal');
+                    $saldo = (intval($debit) - intval($kredit));
+
+                    $tagihan = Tagihan::select('tagihan.id_tagihan', 'jenis_tagihan.nama', 'jenis_tagihan.jml_tagihan')
+                        ->leftJoin('jenis_tagihan', 'jenis_tagihan.id_jenis_tagihan', 'tagihan.id_jenis_tagihan')
+                        ->where('tagihan.id_tagihan', $id_tagihan)
+                        ->first();
+
+                    if ($saldo >= $tagihan->jml_tagihan) {
                         Tabungan::create([
                             'tipe' => 'kredit',
                             'id_siswa' => $request->id_siswa,
-                            'nominal' => $saldo >= $tagihan->jml_tagihan ? $tagihan->jml_tagihan : $saldo,
+                            'nominal' => $tagihan->jml_tagihan,
                             'keterangan' => 'Kredit untuk pembayaran tagihan siswa ' . $tagihan->nama,
                             'tgl_transaksi' => new \DateTime(),
                             'id_petugas' => Auth::user()->id_user
@@ -134,23 +134,28 @@ class TransaksiController extends Controller
                         Transaksi::create([
                             'id_tagihan' => $tagihan->id_tagihan,
                             'total_tagihan' => $tagihan->jml_tagihan,
-                            'total_bayar' => $saldo >= $tagihan->jml_tagihan ? $tagihan->jml_tagihan : $request->kurang_bayar,
+                            'total_bayar' => $tagihan->jml_tagihan,
                             'tgl_transaksi' => new \DateTime(),
-                            'keterangan' => $saldo >= $tagihan->jml_tagihan ? 'Dibayar dengan saldo tabungan siswa senilai Rp ' . number_format($tagihan->jml_tagihan, 0, '.', '.') : 'Dibayar dengan saldo tabungan siswa senilai Rp ' . number_format($saldo, 0, '.', '.') . ' dan cash senilai Rp ' . number_format($request->kurang_bayar, 0, '.', '.'),
                             'id_petugas' => Auth::user()->id_user
                         ]);
                     } else {
-                        return redirect()->back()->with('error', 'Saldo tabungan tidak mencukupi!');
+                        Tabungan::create([
+                            'tipe' => 'kredit',
+                            'id_siswa' => $request->id_siswa,
+                            'nominal' => $saldo,
+                            'keterangan' => 'Kredit untuk pembayaran tagihan siswa ' . $tagihan->nama,
+                            'tgl_transaksi' => new \DateTime(),
+                            'id_petugas' => Auth::user()->id_user
+                        ]);
+
+                        Transaksi::create([
+                            'id_tagihan' => $tagihan->id_tagihan,
+                            'total_tagihan' => $tagihan->jml_tagihan,
+                            'total_bayar' => $tagihan->jml_tagihan,
+                            'tgl_transaksi' => new \DateTime(),
+                            'id_petugas' => Auth::user()->id_user
+                        ]);
                     }
-                } else {
-                    Transaksi::create([
-                        'id_tagihan' => $tagihan->id_tagihan,
-                        'total_tagihan' => $tagihan->jml_tagihan,
-                        'total_bayar' => $tagihan->jml_tagihan,
-                        'tgl_transaksi' => new \DateTime(),
-                        'id_petugas' => Auth::user()->id_user,
-                        'keterangan' => 'Pembayaran cash senilai Rp ' . number_format($tagihan->jml_tagihan, 0, '.', '.')
-                    ]);
                 }
 
                 Tagihan::where('id_tagihan', $id_tagihan)
@@ -236,7 +241,7 @@ class TransaksiController extends Controller
 
     public function download(Request $request)
     {
-        $periode = Carbon::parse($request->tahun . '-' . $request->bulan)->isoFormat('MMMM Y');
+        $periode = Carbon::parse($request->tahun.'-'.$request->bulan)->isoFormat('MMMM Y');
 
         $transaksi = Transaksi::select('siswa.nis', DB::raw('siswa.nama as nama_siswa'), 'jenis_tagihan.nama as nama_tagihan', 'transaksi.*', DB::raw('users.nama as nama_petugas'))
             ->leftJoin('tagihan', 'tagihan.id_tagihan', 'transaksi.id_tagihan')
