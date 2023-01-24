@@ -29,6 +29,7 @@
                             <th>Nama Transaksi</th>
                             <th>Total Tagihan</th>
                             <th>Jumlah Dibayar</th>
+                            <th>Keterangan</th>
                             <th>Tanggal Transaksi</th>
                             <th>Petugas</th>
                         </tr>
@@ -139,6 +140,10 @@
                     {
                         data: 'total_bayar_parse',
                         name: 'total_bayar_parse',
+                    },
+                    {
+                        data: 'keterangan',
+                        name: 'keterangan'
                     },
                     {
                         data: 'tgl_transaksi_parse',

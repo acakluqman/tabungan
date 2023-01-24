@@ -27,7 +27,7 @@ class TransaksiController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Transaksi::select('siswa.nis', DB::raw('siswa.nama as nama_siswa'), DB::raw('jenis_tagihan.nama as nama_tagihan'), 'transaksi.total_tagihan', 'transaksi.total_bayar', 'transaksi.tgl_transaksi', DB::raw('users.nama as nama_petugas'))
+            $data = Transaksi::select('siswa.nis', DB::raw('siswa.nama as nama_siswa'), DB::raw('jenis_tagihan.nama as nama_tagihan'), 'transaksi.total_tagihan', 'transaksi.total_bayar', 'transaksi.keterangan', 'transaksi.tgl_transaksi', DB::raw('users.nama as nama_petugas'))
                 ->leftJoin('tagihan', 'tagihan.id_tagihan', 'transaksi.id_tagihan')
                 ->leftJoin('siswa', 'siswa.id_siswa', 'tagihan.id_siswa')
                 ->leftJoin('jenis_tagihan', 'jenis_tagihan.id_jenis_tagihan', 'tagihan.id_jenis_tagihan')

@@ -43,6 +43,7 @@
                 <th>Pembayaran</th>
                 <th>Total Tagihan</th>
                 <th>Jumlah Bayar</th>
+                <th>Keterangan</th>
                 <th>Tanggal Transaksi</th>
                 <th>Petugas</th>
             </tr>
@@ -55,6 +56,7 @@
                     <td>{{ $tx->nama_tagihan }}</td>
                     <td>{{ 'Rp ' . number_format($tx->total_tagihan, 0, '.', '.') }}</td>
                     <td>{{ 'Rp ' . number_format($tx->total_bayar, 0, '.', '.') }}</td>
+                    <td>{{ $tx->keterangan }}</td>
                     <td>{{ \Carbon\Carbon::parse($tx->tgl_transaksi)->isoFormat('D MMM Y HH:mm:ss') }}</td>
                     <td>{{ $tx->nama_petugas }}</td>
                 </tr>
