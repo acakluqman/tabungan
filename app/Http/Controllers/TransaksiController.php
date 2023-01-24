@@ -134,7 +134,8 @@ class TransaksiController extends Controller
                         Transaksi::create([
                             'id_tagihan' => $tagihan->id_tagihan,
                             'total_tagihan' => $tagihan->jml_tagihan,
-                            'total_bayar' => $saldo >= $tagihan->jml_tagihan ? $tagihan->jml_tagihan : $request->kurang_bayar,
+                            // 'total_bayar' => $saldo >= $tagihan->jml_tagihan ? $tagihan->jml_tagihan : $request->kurang_bayar,
+                            'total_bayar' => $tagihan->jml_tagihan,
                             'tgl_transaksi' => new \DateTime(),
                             'keterangan' => $saldo >= $tagihan->jml_tagihan ? 'Dibayar dengan saldo tabungan siswa senilai Rp ' . number_format($tagihan->jml_tagihan, 0, '.', '.') : 'Dibayar dengan saldo tabungan siswa senilai Rp ' . number_format($saldo, 0, '.', '.') . ' dan cash senilai Rp ' . number_format($request->kurang_bayar, 0, '.', '.'),
                             'id_petugas' => Auth::user()->id_user
