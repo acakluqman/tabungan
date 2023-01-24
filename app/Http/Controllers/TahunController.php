@@ -44,7 +44,7 @@ class TahunController extends Controller
                 ->make(true);
         }
 
-        $this->_updateStatus();
+        $this->updateStatus();
         return view('tahun.index');
     }
 
@@ -156,19 +156,23 @@ class TahunController extends Controller
             ->with('success', 'Berhasil menghapus data tahun ajaran!');
     }
 
-    private function _updateStatus()
+    public function updateStatus()
     {
         DB::beginTransaction();
         try {
             $tahun = Tahun::select('thn_ajaran')
-                ->whereDate('tgl_mulai', '>=', date('Y-m-d'))
-                ->whereDate('tgl_selesai', '<=', date('Y-m-d'))
-                ->get();
+                ->whereDate('tgl_mulai', '<=', Carbon::today())
+                ->whereDate('tgl_selesai', '>=', Carbon::today())
+                ->first();
 
-            if ($tahun) {
-                Tahun::where('is_aktif', 1)->update(['is_aktif' => 0]);
-                Tahun::where('thn_ajaran', $tahun->thn_ajaran)
-                    ->update(['is_aktif', 1]);
+            if (!empty($tahun)) {
+                DB::table('tahun_ajaran')
+                    ->where('is_aktif', 1)
+                    ->update(['is_aktif' => 0]);
+
+                DB::table('tahun_ajaran')
+                    ->where('thn_ajaran', $tahun->thn_ajaran)
+                    ->update(['is_aktif' => 1]);
             }
 
             DB::commit();

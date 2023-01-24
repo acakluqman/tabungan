@@ -267,7 +267,7 @@
 
                             $('#form-edit #thn_ajaran').val(data.thn_ajaran);
                             $('#form-edit #tahun').val(data.thn_ajaran + '/' + (parseInt(data
-                                .thn_ajaran)));
+                                .thn_ajaran) + 1));
                             $('#form-edit #tgl_mulai').val(data.tgl_mulai);
                             $('#form-edit #tgl_selesai').val(data.tgl_selesai);
                             if (parseInt(data.is_aktif)) {

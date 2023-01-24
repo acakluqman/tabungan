@@ -25,8 +25,25 @@ class StoreTahunRequest extends FormRequest
     {
         return [
             'thn_ajaran' => 'required|unique:tahun_ajaran,thn_ajaran',
-            'tgl_mulai' => 'required|date',
-            'tgl_selesai' => 'required|date|after_or_equal:tgl_mulai',
+            'tgl_mulai' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    if (date_format(date_create($value), 'Y') != request()->thn_ajaran) {
+                        $fail('Tanggal mulai harus di tahun ' . request()->thn_ajaran . '!');
+                    }
+                },
+            ],
+            'tgl_selesai' => [
+                'required',
+                'date',
+                'after_or_equal:tgl_mulai',
+                function ($attribute, $value, $fail) {
+                    if (date_format(date_create($value), 'Y') != (request()->thn_ajaran + 1)) {
+                        $fail('Tanggal selesai harus di tahun ' . (request()->thn_ajaran + 1) . '!');
+                    }
+                },
+            ],
             'is_aktif' => 'required'
         ];
     }
